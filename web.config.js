@@ -26,4 +26,4 @@ export const WEB_CONFIG = `<?xml version="1.0" encoding="utf-8"?>
         <iisnode watchedFiles="web.config;*.js;*.cjs" />
     </system.webServer>
 </configuration>
-`;
+`

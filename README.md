@@ -28,8 +28,8 @@ npm i sveltekit-adapter-iis
 In your `svelte.config.js` file replace default adapter with `IISAdapter`
 
 ```js
-import { vitePreprocess } from "@sveltejs/kit/vite";
-import IISAdapter from "svelte-adapter-iis";
+import { vitePreprocess } from '@sveltejs/kit/vite'
+import IISAdapter from 'svelte-adapter-iis'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -41,9 +41,9 @@ const config = {
     },
     adapter: IISAdapter(),
   },
-};
+}
 
-export default config;
+export default config
 ```
 
 Build the project

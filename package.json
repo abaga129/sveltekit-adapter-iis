@@ -4,6 +4,9 @@
   "description": "A SvelteKit Adapter for IIS Web Servers",
   "main": "index.js",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/abaga129/sveltekit-adapter-iis.git"
+  },
   "exports": {
     ".": {
       "types": "./index.d.ts",

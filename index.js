@@ -1,6 +1,6 @@
 import fs, { writeFileSync, copyFileSync } from 'fs'
 import { WEB_CONFIG } from './web.config.js'
-import { SERVER_CJS } from './port.js'
+import { SERVER_CJS } from './server.cjs.js'
 
 /** @type {import('.').default} */
 export default function ({ overrideNodeExePath, overridePort }) {

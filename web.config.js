@@ -1,17 +1,20 @@
 export const WEB_CONFIG = `<?xml version="1.0" encoding="utf-8"?>
 
 <configuration>
+    <appSettings>
+        <add key="PORT" value="{{PORT}}"/>
+    </appSettings>
     <system.webServer>
         <handlers>
             <!-- Indicates that the server.js file is a node.js site to be handled by the iisnode module -->
-            <add name="iisnode" path="server.cjs" verb="*" modules="iisnode" />
+            <add name="iisnode" path="server/server.cjs" verb="*" modules="iisnode" />
         </handlers>
         <rewrite>
             <rules>
                 <!-- All other URLs are mapped to the node.js site entry point -->
                 <rule name="node">
                     <match url=".*" />
-                    <action type="Rewrite" url="server.cjs" />
+                    <action type="Rewrite" url="server/server.cjs" />
                 </rule>
             </rules>
             <!-- Change it back if Location Header got rewrited-->
@@ -23,7 +26,7 @@ export const WEB_CONFIG = `<?xml version="1.0" encoding="utf-8"?>
             </outboundRules>
         </rewrite>
 
-        <iisnode watchedFiles="web.config;*.js;*.cjs" />
+        <iisnode watchedFiles="web.config;*.js;*.cjs" nodeProcessCommandLine="{{NODE_PATH}}"/>
     </system.webServer>
 </configuration>
 `

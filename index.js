@@ -11,15 +11,12 @@ export default function ({ overrideNodeExePath, overridePort }) {
       const outputDir = `${builder.config.kit.outDir}/output`
 
       let webConfig = WEB_CONFIG
-      if (options.overrideNodeExePath) {
-        webConfig = webConfig.replace(
-          '{{NODE_PATH}}',
-          options.overrideNodeExePath
-        )
-      }
-      if (options.overridePort) {
-        webConfig = webConfig.replace('{{PORT}}', options.overridePort)
-      }
+      let nodeExePath = overrideNodeExePath ? overrideNodeExePath : 'node.exe'
+      let portString = overridePort ? overridePort : '3000'
+
+      webConfig = webConfig.replace('{{NODE_PATH}}', nodeExePath)
+      webConfig = webConfig.replace('{{PORT}}', portString)
+
       writeFileSync(`${outputDir}/web.config`, webConfig)
       writeFileSync(`${outputDir}/server/server.cjs`, SERVER_CJS)
       copyFileSync(

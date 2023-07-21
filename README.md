@@ -2,6 +2,11 @@
 
 This package contains an adapter for Sveltekit that will make your project output deployable to IIS.
 
+# **_ DISCLAIMER _**
+
+This is not production ready! It seems that the underlying http server that @sveltejs/adapter-node uses does not support using named pipes so
+currently when deploying this, you will receive an error about an invalid port. It might be possible to write an adapter from scratch that uses express rather than polka but I've decided this would be too much work currently. Please feel free to make a PR but sadly for now this seems unobtainable.
+
 ## Credit
 
 I did not write the most important portion of this code that enables it to work with IIS. I merely used what another user had posted and turned it into an adapter that can easily be installed and used.

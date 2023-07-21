@@ -1,32 +1,31 @@
-export const WEB_CONFIG = `<?xml version="1.0" encoding="utf-8"?>
+export const WEB_CONFIG = `<configuration>
+  <system.webServer>
 
-<configuration>
-    <appSettings>
-        <add key="PORT" value="{{PORT}}"/>
-    </appSettings>
-    <system.webServer>
-        <handlers>
-            <!-- Indicates that the server.js file is a node.js site to be handled by the iisnode module -->
-            <add name="iisnode" path="server/server.cjs" verb="*" modules="iisnode" />
-        </handlers>
-        <rewrite>
-            <rules>
-                <!-- All other URLs are mapped to the node.js site entry point -->
-                <rule name="node">
-                    <match url=".*" />
-                    <action type="Rewrite" url="server/server.cjs" />
-                </rule>
-            </rules>
-            <!-- Change it back if Location Header got rewrited-->
-            <outboundRules>
-                <rule name="back">
-                    <match serverVariable="RESPONSE_Location" pattern="(.*)/server.cjs" />
-                    <action type="Rewrite" value="{R:1}" />
-                </rule>
-            </outboundRules>
-        </rewrite>
+    <!-- indicates that the hello.js file is a node.js application 
+    to be handled by the iisnode module -->
 
-        <iisnode watchedFiles="web.config;*.js;*.cjs" nodeProcessCommandLine="{{NODE_PATH}}"/>
-    </system.webServer>
+    <handlers>
+      <add name="iisnode" path="hello.js" verb="*" modules="iisnode" />
+    </handlers>
+
+    <!-- use URL rewriting to redirect the entire branch of the URL namespace
+    to hello.js node.js application; for example, the following URLs will 
+    all be handled by hello.js:
+    
+        http://localhost/node/express/myapp/foo
+        http://localhost/node/express/myapp/bar
+        
+    -->
+
+    <rewrite>
+      <rules>
+        <rule name="myapp">
+          <match url="myapp/*" />
+          <action type="Rewrite" url="hello.js" />
+        </rule>
+      </rules>
+    </rewrite> 
+    
+  </system.webServer>
 </configuration>
 `

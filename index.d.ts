@@ -7,6 +7,7 @@ export interface AdapterOptions {
   precompress?: boolean
   domain?: string
   jekyll?: boolean
+  overrideNodeExePath?: string 
 }
 
 export default function plugin(options?: AdapterOptions): Adapter

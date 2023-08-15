@@ -1,7 +1,35 @@
-import fs, { writeFileSync, copyFileSync } from 'fs'
+import fs from 'fs-extra'
 import { WEB_CONFIG } from './web.config.js'
-import { SERVER_CJS } from './server.cjs.js'
+import { EXPRESS_SERVER_CJS } from './express-server.cjs.js'
 import node_adapter from '@sveltejs/adapter-node'
+
+const outputFolder = '.svelte-kit/adapter-iis'
+
+function moveOutputToServerFolder() {
+  const fileList = [
+    'client',
+    'server',
+    'env.js',
+    'handler.js',
+    'index.js',
+    'shims.js',
+  ]
+  fileList.forEach((f) => {
+    const from = `build/${f}`
+    const to = `${outputFolder}/app/${f}`
+    fs.moveSync(from, to, (err) => console.error(err))
+  })
+}
+
+function writeFileToOutput(fileContents, fileName) {
+  fs.writeFileSync(`${outputFolder}/${fileName}`, fileContents)
+}
+
+function copyToOutput(path) {
+  if (fs.existsSync(path)) {
+    fs.copySync(path, `${outputFolder}/${path}`)
+  }
+}
 
 /** @type {import('.').default} */
 export default function (options) {
@@ -16,23 +44,20 @@ export default function (options) {
       console.info('Finished adapting with @sveltejs/adapter-node')
       console.info('Adapting with sveltekit-adapter-iis')
 
-      const outputDir = `build`
+      moveOutputToServerFolder()
 
       let webConfig = WEB_CONFIG
       let nodeExePath = options.overrideNodeExePath
         ? options.overrideNodeExePath
         : 'node.exe'
-      let portString = options.overridePort ? options.overridePort : '3000'
 
       webConfig = webConfig.replace('{{NODE_PATH}}', nodeExePath)
-      webConfig = webConfig.replace('{{PORT}}', portString)
+      writeFileToOutput(webConfig, 'web.config')
+      writeFileToOutput(EXPRESS_SERVER_CJS, 'express-server.cjs')
+      copyToOutput('package.json')
+      copyToOutput('package-lock.json')
+      copyToOutput('yarn.lock')
 
-      writeFileSync(`${outputDir}/web.config`, webConfig)
-      writeFileSync(`${outputDir}/server/server.cjs`, SERVER_CJS)
-      copyFileSync(
-        `${builder.config.kit.env.dir}/package.json`,
-        `${outputDir}/package.json`
-      )
       console.info('Finished adapting with sveltekit-adapter-iis')
     },
   }

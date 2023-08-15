@@ -2,17 +2,6 @@
 
 This package contains an adapter for Sveltekit that will make your project output deployable to IIS.
 
-# **_ DISCLAIMER _**
-
-This is not production ready! It seems that the underlying http server that @sveltejs/adapter-node uses does not support using named pipes so
-currently when deploying this, you will receive an error about an invalid port. It might be possible to write an adapter from scratch that uses express rather than polka but I've decided this would be too much work currently. Please feel free to make a PR but sadly for now this seems unobtainable.
-
-## Credit
-
-I did not write the most important portion of this code that enables it to work with IIS. I merely used what another user had posted and turned it into an adapter that can easily be installed and used.
-
-Proper credit goes to reddit user [jasonlyu123]("https://www.reddit.com/user/jasonlyu123/"). Thanks for being so helpful and sharing this with the community!
-
 ## Prerequisites
 
 - IIS 7.0 or greater with `IISRewrite` module installed
@@ -61,6 +50,37 @@ yarn build
 npm run build
 ```
 
+## Deploy the files to IIS
+
+1. On the server which runs IIS, create a new folder under `%SystemDrive%\inetpub`.
+
+2. Copy the files from `.svelte-kit/adapter-iis` (from your project) to the folder on the server which you just created.
+
+3. Install your node_modules in this folder using the package manager of your choice. yarn.lock and package-lock.json get copied as part of the build step to ensure that dependency version remain the same.
+
+4. In IIS Manager add a new Website
+   `Sites -> Add Website...`
+
+5. Set the `Physical Path` to the folder from the first step.
+
+The rest of the settings for the Web Site are up to your own disgresion.
+
+You should now see your site running. If it is not, you may want to check the iis-node documentation on how to get logs and traces from the app.
+
+## Disclaimer
+
+Note that this only works when served from the root of a domain.
+
+So you can server it from `www.mysvelteapp.com` or `sub.mysvelteapp.com` but it will not work from `www.mysvelteapp.com/subfolder`. Unfortunately this is due to how routing works with sveltekit. Adding the `base` property to your sveltekit config causes all of the routes to have that appended so you ende up with the app living on `www.mysevelteapp.com/subfolder/subfolder`.
+
 ## How it works
 
-This adapter simply creates a `web.config` file in the build output folder and then creates a `server.cjs` inside the server folder of your build output. The `web.config` rewrites incoming traffic to the `server.cjs` which is handled by iisnode.
+This adapter wraps `adapter-node` from `@sveltejs/kit` and uses express as the web server. It outputs a web.config file that rewrites incoming requests to the express server.
+
+## Contributions
+
+Contributions are welcome! Please open an issue or submit a PR if you would like to help out with this project!
+
+<!-- ## How it works
+
+This adapter simply creates a `web.config` file in the build output folder and then creates a `server.cjs` inside the server folder of your build output. The `web.config` rewrites incoming traffic to the `server.cjs` which is handled by iisnode. -->

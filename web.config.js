@@ -15,7 +15,7 @@ export const WEB_CONFIG = `<?xml version="1.0" encoding="utf-8"?>
 			  </rules>
 			</rewrite>
 			
-        <iisnode watchedFiles="web.config;node_modules\\*;*.js;*.cjs" nodeProcessCommandLine="node.exe"/>
+        <iisnode watchedFiles="web.config;node_modules\\*;*.js;*.cjs" nodeProcessCommandLine="{{NODE_PATH}}"/>
     </system.webServer>
 </configuration>
 `

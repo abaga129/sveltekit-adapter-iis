@@ -33,7 +33,7 @@ function copyToOutput(path) {
 
 function cleanupOutputDirectory() {
   if (fs.pathExistsSync(outputFolder)) {
-    fs.rmdirSync(outputFolder, { recursive: true, force: true })
+    fs.rmSync(outputFolder, { recursive: true, force: true })
   }
 }
 

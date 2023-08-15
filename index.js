@@ -31,6 +31,12 @@ function copyToOutput(path) {
   }
 }
 
+function cleanupOutputDirectory() {
+  if (fs.pathExistsSync(outputFolder)) {
+    fs.rmdirSync(outputFolder)
+  }
+}
+
 /** @type {import('.').default} */
 export default function (options) {
   /** @type {import('@sveltejs/kit').Adapter} */
@@ -44,6 +50,7 @@ export default function (options) {
       console.info('Finished adapting with @sveltejs/adapter-node')
       console.info('Adapting with sveltekit-adapter-iis')
 
+      cleanupOutputDirectory()
       moveOutputToServerFolder()
 
       let webConfig = WEB_CONFIG

@@ -54,9 +54,10 @@ export default function (options) {
       moveOutputToServerFolder()
 
       let webConfig = WEB_CONFIG
-      let nodeExePath = options.overrideNodeExePath
-        ? options.overrideNodeExePath
-        : 'node.exe'
+      let nodeExePath =
+        options && options.overrideNodeExePath
+          ? options.overrideNodeExePath
+          : 'node.exe'
 
       webConfig = webConfig.replace('{{NODE_PATH}}', nodeExePath)
       writeFileToOutput(webConfig, 'web.config')

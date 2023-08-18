@@ -12,11 +12,22 @@ This package contains an adapter for Sveltekit that will make your project outpu
 Install to your sveltekit project
 
 ```bash
-yarn add sveltekit-adapter-iis
+yarn add sveltekit-adapter-iis -D
 
 #or
 
-npm i sveltekit-adapter-iis
+npm i sveltekit-adapter-iis --save-dev
+```
+
+Install express as a dependency (express is used to serve the app).
+Note that you can also install express manually to the built files if you prefer that method. In that case, before deploying, you will run this command in `.svelte-kit/adapter-iis` rather than to your project root.
+
+```bash
+yarn add express
+
+#or
+
+npm i express --save
 ```
 
 In your `svelte.config.js` file replace default adapter with `IISAdapter`

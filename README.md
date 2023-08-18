@@ -20,7 +20,7 @@ npm i sveltekit-adapter-iis --save-dev
 ```
 
 Install express as a dependency (express is used to serve the app).
-Note that you can also install express manually to the built files if you prefer that method. In that case, before deploying, you will run this command in `.svelte-kit/adapter-iis` rather than to your project root.
+Note that you can also install express manually to the built files if you prefer that method. In that case, during step 3 of [Deploy the files to IIS](#deploy-the-files-to-iis), you will also need to install express as a dependency.
 
 ```bash
 yarn add express
@@ -69,6 +69,15 @@ npm run build
 
 3. Install your node_modules in this folder using the package manager of your choice. yarn.lock and package-lock.json get copied as part of the build step to ensure that dependency version remain the same.
 
+```bash
+# --production flag prevents devDependencies from installing
+yarn install --production
+
+#or
+
+npm install --production
+```
+
 4. In IIS Manager add a new Website
    `Sites -> Add Website...`
 
@@ -82,7 +91,7 @@ You should now see your site running. If it is not, you may want to check the ii
 
 Note that this only works when served from the root of a domain.
 
-So you can server it from `www.mysvelteapp.com` or `sub.mysvelteapp.com` but it will not work from `www.mysvelteapp.com/subfolder`. Unfortunately this is due to how routing works with sveltekit. Adding the `base` property to your sveltekit config causes all of the routes to have that appended so you ende up with the app living on `www.mysevelteapp.com/subfolder/subfolder`.
+So you can serve it from `www.mysvelteapp.com` or `sub.mysvelteapp.com` but it will not work from `www.mysvelteapp.com/subfolder`. Unfortunately this is due to how routing works with sveltekit. Adding the `base` property to your sveltekit config causes all of the routes to have that appended so you ende up with the app living on `www.mysevelteapp.com/subfolder/subfolder`.
 
 ## How it works
 

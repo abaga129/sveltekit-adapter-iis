@@ -2,8 +2,15 @@
 
 ## Differences in this fork:
 - use `node:http` server instead of `express`, so it does not require an external dependency of `express`
-  
-TODO update the readme, add git install instructions, etc
+
+## TODO
+- [ ] update deps
+- [ ] update README
+  - [ ] github:whatever `pnpm` install instructions
+- [ ] IIS setup guide
+  - [ ] iisnode
+  - [ ] [urlrewrite](https://www.iis.net/downloads/microsoft/url-rewrite)
+  - [ ] starting/stopping iis locks/unlocks the build directory
 
 This package contains an adapter for Sveltekit that will make your project output deployable to IIS.
 

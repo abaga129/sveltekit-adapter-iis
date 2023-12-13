@@ -1,5 +1,10 @@
 # SvelteKit Adapter IIS
 
+## Differences in this fork:
+- use `node:http` server instead of `express`, so it does not require an external dependency of `express`
+  
+TODO update the readme, add git install instructions, etc
+
 This package contains an adapter for Sveltekit that will make your project output deployable to IIS.
 
 ## Prerequisites
@@ -41,10 +46,10 @@ const config = {
   preprocess: vitePreprocess(),
 
   kit: {
-    version: {
-      pollInterval: 300000,
-    },
-    adapter: IISAdapter(),
+	version: {
+	  pollInterval: 300000,
+	},
+	adapter: IISAdapter(),
   },
 }
 

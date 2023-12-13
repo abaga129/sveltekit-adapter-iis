@@ -1,21 +1,21 @@
-export const EXPRESS_SERVER_CJS = `const express = require('express')
+export const EXPRESS_SERVER_CJS = `
+const http = require('node:http')
 import('./app/handler.js')
 	.then((handler) => {
-		const app = express();
-
-		// add a route that lives separately from the SvelteKit app
-		app.get('/healthcheck', (req, res) => {
-			res.end('ok');
+		const server = http.createServer((req, res) => {
+			// add a route that lives separately from the SvelteKit app
+			if (req.url === '/healthcheck' && req.method === 'GET') {
+				res.end('ok');
+			} else {
+				// let SvelteKit handle everything else, including serving prerendered pages and static assets
+				handler.handler(req, res);
+			}
 		});
 
-		// let SvelteKit handle everything else, including serving prerendered pages and static assets
-		app.use(handler.handler);
+		const PORT = process.env.PORT || 3000; // Set a default port if not provided in the environment
 
-		console.log(process.env.PORT)
-		app.listen(process.env.PORT, () => {
-			console.log(
-				'listening on port ' + process.env.PORT
-			);
+		server.listen(PORT, () => {
+			console.log('Server is listening on port ' + PORT);
 		});
 
 	}).catch((err) => console.error(err));

@@ -5,6 +5,9 @@ import node_adapter from '@sveltejs/adapter-node'
 
 const outputFolder = '.svelte-kit/adapter-iis'
 
+console.info("content: ", fs.readdirSync(`${outputFolder}`))
+console.info("content/build: ", fs.readdirSync(`build`))
+
 function moveOutputToServerFolder() {
   const fileList = [
     'client',
@@ -48,7 +51,7 @@ export default function (options) {
       console.info('Adapting with @sveltejs/adapter-node')
       await na.adapt(builder)
       console.info('Finished adapting with @sveltejs/adapter-node')
-      console.info('Adapting with sveltekit-adapter-iis')
+      console.info('Adapting with sveltekit-adapter-iis (fork)')
 
       cleanupOutputDirectory()
       moveOutputToServerFolder()

@@ -11,6 +11,7 @@
   - [ ] iisnode
   - [ ] [urlrewrite](https://www.iis.net/downloads/microsoft/url-rewrite)
   - [ ] starting/stopping iis locks/unlocks the build directory
+- [ ] possibly contribute back to original adapter?
 
 This package contains an adapter for Sveltekit that will make your project output deployable to IIS.
 

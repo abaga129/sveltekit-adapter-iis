@@ -38,10 +38,11 @@ function copyToOutput(path) {
 
 /** @param {string[]} ignoreGlobs */
 function cleanupOutputDirectory(ignoreGlobs) {
-	const paths = fg.globSync('**/*', { ignore: ignoreGlobs, cwd: path.resolve(outputFolder), dot: true } )
+	const absPath = path.resolve(outputFolder)
+	const paths = fg.globSync('**/*', { ignore: ignoreGlobs, cwd: absPath, dot: true } )
 	// fs.rmSync(`${outputFolder}/app`, { recursive: true, force: true })
 	for (const p of paths) { 
-		fs.rmSync(`${outputFolder}/${p}`, { force: true }) 
+		fs.rmSync(path.join(absPath, p), { force: true }) 
 	}
 }
 

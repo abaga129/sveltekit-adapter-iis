@@ -6,15 +6,9 @@ export interface AdapterOptions extends AdapterNodeAdapterOptions {
   overrideNodeExePath?: string,
 
 	/**
-	 * glob patters that are not deleted from `.svelte-kit/adapter-iis` during adapting  
-	 * useful in conjunction with `rollup-plugin-copy` copying some files into `.svelte-kit/adapter-iis/*`  
-	 *   
-	 * whitelists of anything in `.svelte-kit/adapter-iis/app` will be ignored.
-	 * that is part is handled by the adapter, it gets re-generated every time.  
-	 * 
-	 * @example `*db/*`, not `db/*`
+	 * names of directories/files in `.svelte-kit/adapter-iis/` to keep when deleting
 	 */
-	outputWhitelistGlobs: string[]
+	outputWhitelist: string[]
 }
 
 export default function plugin(options?: AdapterOptions): Adapter

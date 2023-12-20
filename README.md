@@ -133,13 +133,13 @@ export default defineConfig(({ command }) => {
     return config
 }
 ```
-set the `outputWhitelistGlobs`
+set the `outputWhitelistDirs`
 ```js
 // in svelte.config.js
 const config = {
     //...
     kit: {
-        adapter: IISAdapter({ outputWhitelistGlobs: ['**/db/*'] })
+        adapter: IISAdapter({ outputWhitelistDirs: ['db'] })
     }
 }
 ```

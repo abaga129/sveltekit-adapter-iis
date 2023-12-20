@@ -101,8 +101,8 @@ This is not a complete guide, but it should help.
     - set `nodeProcessCommandLine` to `C:\Program Files\nodejs\node.exe`
 - Set up file permissions for log dir & for `adapter-iis` dir for IIS_USER or Everyone to allow all
 
-## `outputWhitelistGlobs`
-This adapter also provides `outputWhitelistGlobs` in options. This is useful when you need some extra directores on server for the app to function. You can do the following:  
+## `outputWhitelist`
+This adapter also provides `outputWhitelist` in options. This is useful when you need some extra directores on server for the app to function. You can do the following:  
   
 Use `rollup-plugin-copy` to copy the files
 ```ts
@@ -133,13 +133,13 @@ export default defineConfig(({ command }) => {
     return config
 }
 ```
-set the `outputWhitelistDirs`
+set the `outputWhitelist`
 ```js
 // in svelte.config.js
 const config = {
     //...
     kit: {
-        adapter: IISAdapter({ outputWhitelistDirs: ['db'] })
+        adapter: IISAdapter({ outputWhitelist: ['db'] })
     }
 }
 ```

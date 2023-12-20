@@ -38,9 +38,9 @@ function copyToOutput(path) {
 
 /** @param {string[]} whitelist */
 function cleanupOutputDirectory(whitelist) {
-	const ldir = fs.readdirSync(outputFolder).filter(dir => !whitelist.includes(dir))
+	const ldir = fs.readdirSync(outputFolder).filter(p => !whitelist.includes(p))
 	for (const thing of ldir) {
-		fs.rmSync(thing, { recursive: true, force: true })
+		fs.rmSync(`${outputFolder}/${thing}`, { recursive: true, force: true })
 	}
 }
 

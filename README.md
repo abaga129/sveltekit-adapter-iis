@@ -128,7 +128,7 @@ export default defineConfig(({ command }) => {
         config.plugins.push(copyPlugin)
     }
     return config
-}
+})
 ```
 set the `outputWhitelist`
 ```js

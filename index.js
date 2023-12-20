@@ -1,12 +1,14 @@
 import fs from 'fs-extra'
+import node_adapter from '@sveltejs/adapter-node'
+import fg from 'fast-glob';
+import path from 'node:path'
+
 import { WEB_CONFIG } from './web.config.js'
 import { EXPRESS_SERVER_CJS } from './express-server.cjs.js'
-import node_adapter from '@sveltejs/adapter-node'
 
 const outputFolder = '.svelte-kit/adapter-iis'
 
-// console.info("content: ", fs.readdirSync(`${outputFolder}`))
-// console.info("content/build: ", fs.readdirSync(`build`))
+// 
 
 function moveOutputToServerFolder() {
   const fileList = [
@@ -17,7 +19,6 @@ function moveOutputToServerFolder() {
     'index.js',
     'shims.js',
   ]
-	console.info('build:', fs.readdirSync('build/server'))
   fileList.forEach((f) => {
     const from = `build/${f}`
     const to = `${outputFolder}/app/${f}`
@@ -35,10 +36,13 @@ function copyToOutput(path) {
   }
 }
 
-function cleanupOutputDirectory() {
-  if (fs.pathExistsSync(outputFolder)) {
-    fs.rmSync(outputFolder, { recursive: true, force: true })
-  }
+/** @param {string[]} ignoreGlobs */
+function cleanupOutputDirectory(ignoreGlobs) {
+	const paths = fg.globSync('**/*', { ignore: ignoreGlobs, cwd: path.resolve(outputFolder), dot: true } )
+	// fs.rmSync(`${outputFolder}/app`, { recursive: true, force: true })
+	for (const p of paths) { 
+		fs.rmSync(`${outputFolder}/${p}`, { force: true }) 
+	}
 }
 
 /** @type {import('.').default} */
@@ -50,11 +54,11 @@ export default function (options) {
     name: 'sveltekit-adapter-iis',
     async adapt(builder) {
       console.info('Adapting with @sveltejs/adapter-node')
-      await na.adapt(builder)
+      await na.adapt(builder) // this populates ${outputFolder}/app with other things
       console.info('Finished adapting with @sveltejs/adapter-node')
       console.info('Adapting with sveltekit-adapter-iis (fork)')
 
-      cleanupOutputDirectory()
+      cleanupOutputDirectory(options?.outputWhitelistGlobs ?? [])
       moveOutputToServerFolder()
 
       let webConfig = WEB_CONFIG

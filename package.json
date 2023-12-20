@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@sveltejs/adapter-node": "^2.0.1",
+    "fast-glob": "^3.3.2",
     "fs-extra": "^11.2.0"
   }
 }

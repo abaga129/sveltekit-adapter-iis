@@ -2,6 +2,7 @@
 
 ## Differences in this fork:
 - use `node:http` server instead of `express`, so it does not require an external dependency of `express`
+- allow array of whitelist globs to not be deleted during adapting
 
 ## TODO
 - [ ] update deps
@@ -12,6 +13,7 @@
   - [ ] [urlrewrite](https://www.iis.net/downloads/microsoft/url-rewrite)
   - [ ] starting/stopping iis locks/unlocks the build directory
 - [ ] contribute back to original adapter?
+- [ ] add ignore glob example
 
 This package contains an adapter for Sveltekit that will make your project output deployable to IIS.
 
@@ -21,29 +23,22 @@ This package contains an adapter for Sveltekit that will make your project outpu
 - [iisnode]("https://github.com/Azure/iisnode") installed to server that runs IIS
 
 ## Usage
-
-Install to your sveltekit project
-
+1. Install to your sveltekit project
+### from github
 ```bash
-yarn add sveltekit-adapter-iis -D
+pnpm add -D github:KraXen72/sveltekit-adapter-iis
+```
 
+### from npm
+Will be available later
+```bash
+pnpm add -D sveltekit-adapter-iis
 #or
-
 npm i sveltekit-adapter-iis --save-dev
 ```
 
-Install express as a dependency (express is used to serve the app).
-Note that you can also install express manually to the built files if you prefer that method. In that case, during step 3 of [Deploy the files to IIS](#deploy-the-files-to-iis), you will also need to install express as a dependency.
 
-```bash
-yarn add express
-
-#or
-
-npm i express --save
-```
-
-In your `svelte.config.js` file replace default adapter with `IISAdapter`
+2. In your `svelte.config.js` file replace default adapter with `IISAdapter`
 
 ```js
 import { vitePreprocess } from '@sveltejs/kit/vite'
@@ -64,41 +59,55 @@ const config = {
 export default config
 ```
 
-Build the project
+3. Build the project
 
 ```sh
-yarn build
-
+pnpm build
 #or
-
 npm run build
 ```
 
+## Setting up IIS
+This is not a complete guide, but it should help.
+1. [Enable IIS on your local machine for testing](https://www.howtogeek.com/112455/how-to-install-iis-8-on-windows-8/)
+2. Restart your computer, check if it works by going to `localhost` without a port
+3. Find the IIS manager program (recommended: pin it to start)
+   - `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools`
+     - `Internet Information Services (IIS) Manager`
+   - or: `%windir%\system32\inetsrv\InetMgr.exe`
+4. Install [URL Rewrite](https://www.iis.net/downloads/microsoft/url-rewrite#additionalDownloads) and [iisnode](https://github.com/Azure/iisnode/releases) modules
+   - URLRewrite: `English x64`
+   - iisnode: `iisnode-full-vx.x.x-x64.msi`
+5. Restart IIS from the manager:
+	![iismanager restart](.github/assets/IISmgr1.png)
+6. Unlock the section in global config (More information needed)
+7. Set some permission to `Read/Write` instead of `Read Only` (More information needed)
+8. Set up logs: 
+   - Create a logging directory, for example `D:/coding/iislogs` 
+   - Open global `Configuration Editor` > `system.webServer/iisnode` > set `logDirectory`
+
+## Common IIS troubleshooting
+- [Locked section error](https://serverfault.com/questions/360438/iis-complains-about-a-locked-section-how-can-i-find-out-where-its-locked)
+- UrlRewrite rule is not enabled
+- Node executable cannot be found
+  - Open global `Configuration Editor` > `system.webServer/iisnode`
+    - set `nodeProcessCommandLine` to `C:\Program Files\nodejs\node.exe`
+- Set up file permissions for log dir & for `adapter-iis` dir for IIS_USER or Everyone to allow all
+- 
+
 ## Deploy the files to IIS
+### Direct point to output directory
+- This is useful for local testing with IIS running on your machine
+- You will have to stop the website and possibly IIS every time when re-building.
+    
+1 . In IIS Manager add a new Website: `Sites -> Add Website...`
+2. Set the `Physical Path` to `<your project>/.svelte-kit/adapter-iis`.
 
-1. On the server which runs IIS, create a new folder under `%SystemDrive%\inetpub`.
-
-2. Copy the files from `.svelte-kit/adapter-iis` (from your project) to the folder on the server which you just created.
-
-3. Install your node_modules in this folder using the package manager of your choice. yarn.lock and package-lock.json get copied as part of the build step to ensure that dependency version remain the same.
-
-```bash
-# --production flag prevents devDependencies from installing
-yarn install --production
-
-#or
-
-npm install --production
-```
-
-4. In IIS Manager add a new Website
-   `Sites -> Add Website...`
-
-5. Set the `Physical Path` to the folder from the first step.
-
-The rest of the settings for the Web Site are up to your own disgresion.
-
-You should now see your site running. If it is not, you may want to check the iis-node documentation on how to get logs and traces from the app.
+### Copying build output elsewhere
+1. create a new folder in `C:/inetpub/<your project>`
+2. copy the contents of `<your project>/.svelte-kit/adapter-iis` into `C:/inetpub/<your project>`
+3. In IIS Manager add a new Website: `Sites -> Add Website...`
+4. Set the `Physical Path` to `C:/inetpub/<your project>`.
 
 ## Disclaimer
 

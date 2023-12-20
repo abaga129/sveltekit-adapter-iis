@@ -6,11 +6,6 @@
 
 This package contains an adapter for Sveltekit that will make your project output deployable to IIS.
 
-## Prerequisites
-
-- IIS 7.0 or greater with `IISRewrite` module installed
-- [iisnode]("https://github.com/Azure/iisnode") installed to server that runs IIS
-
 ## Usage
 1. Install to your sveltekit project
 ### from github
@@ -57,7 +52,10 @@ npm run build
 ```
 
 ## Deploy the files to IIS
-Check out [Setting up IIS](#setting-up-iis) or [IIS Troubleshooting](#iis-troubleshooting) if needed.
+### Prerequisites
+- IIS 7.0 or greater with `IISRewrite` module and [iisnode]("https://github.com/Azure/iisnode") installed
+- Check out [Setting up IIS](#setting-up-iis) or [IIS Troubleshooting](#iis-troubleshooting) if needed.
+  
 ### Option 1: Direct point to output directory
 - This is useful for local testing with IIS running on your machine
 - You will have to stop the website and possibly IIS every time when re-building.

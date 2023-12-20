@@ -104,6 +104,7 @@ This adapter also provides `outputWhitelist` in options. This is useful when you
 Use `rollup-plugin-copy` to copy the files
 ```ts
 // vite.config.ts
+import { resolve } from 'node:path';
 import { defineConfig, normalizePath } from 'vite';
 import copy from 'rollup-plugin-copy'
 

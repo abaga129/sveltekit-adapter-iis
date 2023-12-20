@@ -5,8 +5,8 @@ import node_adapter from '@sveltejs/adapter-node'
 
 const outputFolder = '.svelte-kit/adapter-iis'
 
-console.info("content: ", fs.readdirSync(`${outputFolder}`))
-console.info("content/build: ", fs.readdirSync(`build`))
+// console.info("content: ", fs.readdirSync(`${outputFolder}`))
+// console.info("content/build: ", fs.readdirSync(`build`))
 
 function moveOutputToServerFolder() {
   const fileList = [
@@ -17,6 +17,7 @@ function moveOutputToServerFolder() {
     'index.js',
     'shims.js',
   ]
+	console.info('build:', fs.readdirSync('build/server'))
   fileList.forEach((f) => {
     const from = `build/${f}`
     const to = `${outputFolder}/app/${f}`
@@ -68,6 +69,7 @@ export default function (options) {
       copyToOutput('package.json')
       copyToOutput('package-lock.json')
       copyToOutput('yarn.lock')
+			copyToOutput('pnpm-lock.yml')
 
       console.info('Finished adapting with sveltekit-adapter-iis')
     },

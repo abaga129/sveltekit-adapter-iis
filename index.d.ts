@@ -12,8 +12,7 @@ export interface AdapterOptions extends AdapterNodeAdapterOptions {
 	 * whitelists of anything in `.svelte-kit/adapter-iis/app` will be ignored.
 	 * that is part is handled by the adapter, it gets re-generated every time.  
 	 * 
-	 * should take into account that db might not be root 
-	 * @example `**/db/*`, not `db/*`
+	 * @example `*db/*`, not `db/*`
 	 */
 	outputWhitelistGlobs: string[]
 }

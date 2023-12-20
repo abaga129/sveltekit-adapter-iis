@@ -39,11 +39,14 @@ function copyToOutput(path) {
 /** @param {string[]} _ignoreGlobs */
 function cleanupOutputDirectory(_ignoreGlobs) {
 	const ignoreGlobs = _ignoreGlobs.map(glob => glob.replace(/\\/g, '/'))
-	const paths = fsWalk.walkSync(outputFolder).map(pathObj => pathObj.path.replace(/\\/g, '/'))
+	const paths = fsWalk.walkSync(outputFolder)
+		.filter(pathObj =>pathObj)
+		.map(pathObj => pathObj.path.replace(/\\/g, '/'))
 
 	// fs.rmSync(`${outputFolder}/app`, { recursive: true, force: true })
 	const deletePaths = micromatch.not(paths, ignoreGlobs, { dot: true })
 	for (const p of deletePaths) {
+		if (p.includes('db')) console.info(p)
 		if (fs.existsSync(p)) fs.rmSync(p, { force: true, recursive: true })
 	}
 }

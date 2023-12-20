@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import node_adapter from '@sveltejs/adapter-node'
-import fg from 'fast-glob';
-import path from 'node:path'
+import * as fsWalk from '@nodelib/fs.walk';
+import micromatch from 'micromatch';
 
 import { WEB_CONFIG } from './web.config.js'
 import { EXPRESS_SERVER_CJS } from './express-server.cjs.js'
@@ -36,13 +36,15 @@ function copyToOutput(path) {
   }
 }
 
-/** @param {string[]} ignoreGlobs */
-function cleanupOutputDirectory(ignoreGlobs) {
-	const absPath = path.resolve(outputFolder)
-	const paths = fg.globSync('**/*', { ignore: ignoreGlobs, cwd: absPath, dot: true } )
+/** @param {string[]} _ignoreGlobs */
+function cleanupOutputDirectory(_ignoreGlobs) {
+	const ignoreGlobs = _ignoreGlobs.map(glob => glob.replace(/\\/g, '/'))
+	const paths = fsWalk.walkSync(outputFolder).map(pathObj => pathObj.path.replace(/\\/g, '/'))
+
 	// fs.rmSync(`${outputFolder}/app`, { recursive: true, force: true })
-	for (const p of paths) { 
-		fs.rmSync(path.join(absPath, p), { force: true }) 
+	const deletePaths = micromatch.not(paths, ignoreGlobs, { dot: true })
+	for (const p of deletePaths) {
+		if (fs.existsSync(p)) fs.rmSync(p, { force: true, recursive: true })
 	}
 }
 

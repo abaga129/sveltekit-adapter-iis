@@ -10,7 +10,10 @@ export interface AdapterOptions extends AdapterNodeAdapterOptions {
 	 * useful in conjunction with `rollup-plugin-copy` copying some files into `.svelte-kit/adapter-iis/*`  
 	 *   
 	 * whitelists of anything in `.svelte-kit/adapter-iis/app` will be ignored.
-	 * that is part is handled by the adapter, it gets re-generated every time.
+	 * that is part is handled by the adapter, it gets re-generated every time.  
+	 * 
+	 * should take into account that db might not be root 
+	 * @example `**/db/*`, not `db/*`
 	 */
 	outputWhitelistGlobs: string[]
 }

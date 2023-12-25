@@ -1,8 +1,8 @@
 /** @param {import('.').createWebConfigOptions} options */
 export function createWebConfig(options) {
 	const routes = Array.from(new Set(options.externalRoutes ?? []))
-	return `
-<?xml version="1.0" encoding="utf-8"?>
+	// <?xml version="1.0" encoding="utf-8"?> has to be on the first line!
+	return `<?xml version="1.0" encoding="utf-8"?>
 <configuration>
 	<system.webServer>
 		<handlers>

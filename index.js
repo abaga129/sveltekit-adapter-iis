@@ -1,14 +1,10 @@
 import fs from 'fs-extra'
 import node_adapter from '@sveltejs/adapter-node'
-import * as fsWalk from '@nodelib/fs.walk';
-import micromatch from 'micromatch';
 
-import { WEB_CONFIG } from './web.config.js'
-import { EXPRESS_SERVER_CJS } from './express-server.cjs.js'
+import { createWebConfig } from './web.config.js'
+import { NODE_SERVER_CJS } from './node-server.cjs.js'
 
 const outputFolder = '.svelte-kit/adapter-iis'
-
-// 
 
 function moveOutputToServerFolder() {
   const fileList = [
@@ -60,15 +56,15 @@ export default function (options) {
       cleanupOutputDirectory(options?.outputWhitelist ?? [])
       moveOutputToServerFolder()
 
-      let webConfig = WEB_CONFIG
-      let nodeExePath =
-        options && options.overrideNodeExePath
-          ? options.overrideNodeExePath
-          : 'node.exe'
+      let webConfig = createWebConfig({
+				nodePath: options?.overrideNodeExePath,
+				externalRoutes: options?.externalRoutes,
+				externalRoutesIgnoreCase: options?.externalRoutesIgnoreCase
+			})
 
       webConfig = webConfig.replace('{{NODE_PATH}}', nodeExePath)
       writeFileToOutput(webConfig, 'web.config')
-      writeFileToOutput(EXPRESS_SERVER_CJS, 'express-server.cjs')
+      writeFileToOutput(NODE_SERVER_CJS, 'node-server.cjs')
       copyToOutput('package.json')
       copyToOutput('package-lock.json')
       copyToOutput('yarn.lock')

@@ -56,13 +56,12 @@ export default function (options) {
       cleanupOutputDirectory(options?.outputWhitelist ?? [])
       moveOutputToServerFolder()
 
-      let webConfig = createWebConfig({
+      const webConfig = createWebConfig({
 				nodePath: options?.overrideNodeExePath,
 				externalRoutes: options?.externalRoutes,
 				externalRoutesIgnoreCase: options?.externalRoutesIgnoreCase
 			})
 
-      webConfig = webConfig.replace('{{NODE_PATH}}', nodeExePath)
       writeFileToOutput(webConfig, 'web.config')
       writeFileToOutput(NODE_SERVER_CJS, 'node-server.cjs')
       copyToOutput('package.json')

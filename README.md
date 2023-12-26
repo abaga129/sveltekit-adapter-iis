@@ -140,7 +140,7 @@ export default defineConfig(({ command }) => {
 ```
 set the `outputWhitelist`
 ```js
-// in svelte.config.js
+// svelte.config.js
 const config = {
     //...
     kit: {
@@ -149,6 +149,27 @@ const config = {
 }
 ```
 Now, when building, `.svelte-kit/adapter-iis/db` should get preserved instead of being deleted
+
+## Using Virual Directories
+You might want to use the IIS feature 'Virtual Directory', where it maps a real directory onto a route.
+To make sure sveltekit doesen't block this with a 404, modify `externalRoutes` option in the adapter config:
+```js
+// svelte.config.js
+const config = {
+    //...
+    kit: {
+        adapter: IISAdapter({ externalRoutes: ['cdn', 'images', 'viewer' ] })
+    }
+}
+```
+  
+Then add some virtual directories that map to `cdn`, `images`, and `viewer`.
+Re-build the app, and these routes will be taken into account in the generated `web.config` file.
+
+## `/healthcheck` route
+By default, since IIS can be quite tricky to set up, the adapter adds a simple `/healthcheck` route, which responds with 'ok'
+This is useful if you want to determine that the node server is running, but your main site isn't loading for whatever reson.
+The route can be turned off setting the `healthcheckRoute` adapter option to `false`. (A re-build is needed to take effect.)
 
 
 

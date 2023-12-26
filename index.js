@@ -2,7 +2,7 @@ import fs from 'fs-extra'
 import node_adapter from '@sveltejs/adapter-node'
 
 import { createWebConfig } from './web.config.js'
-import { NODE_SERVER_CJS } from './node-server.cjs.js'
+import { createNodeServer } from './node-server.cjs.js'
 
 const outputFolder = '.svelte-kit/adapter-iis'
 
@@ -61,9 +61,10 @@ export default function (options) {
 				externalRoutes: options?.externalRoutes,
 				externalRoutesIgnoreCase: options?.externalRoutesIgnoreCase
 			})
+			const nodeServer = createNodeServer(options?.healthcheckRoute ?? true)
 
       writeFileToOutput(webConfig, 'web.config')
-      writeFileToOutput(NODE_SERVER_CJS, 'node-server.cjs')
+      writeFileToOutput(nodeServer, 'node-server.cjs')
       copyToOutput('package.json')
       copyToOutput('package-lock.json')
       copyToOutput('yarn.lock')

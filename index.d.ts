@@ -21,13 +21,20 @@ export interface AdapterOptions extends AdapterNodeAdapterOptions {
 	 * For example:  
 	 * `['cdn']` will allow a virutal directory called `cdn` to work
 	 */
-	externalRoutes: string[]
+	externalRoute?: string[]
 
 	/** 
 	 * whether external routes should match case-sensitive or not.
 	 * @default true
 	 */
-	externalRoutesIgnoreCase: boolean
+	externalRoutesIgnoreCase?: boolean
+
+	/**
+	 * enable or disable a /healthcheck route which responds with 'ok' if the node server is running
+	 * useful if sveltekit is broken, but the node server itself is up.
+	 * @default true
+	 */
+	healthcheckRoute?: boolean
 }
 
 export default function plugin(options?: AdapterOptions): Adapter;

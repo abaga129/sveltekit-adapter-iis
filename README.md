@@ -89,12 +89,21 @@ This is not a complete guide, but it should help.
    - Open global `Configuration Editor` > `system.webServer/iisnode` > set `logDirectory`
   
 ## IIS troubleshooting
-- [Locked section error](https://serverfault.com/questions/360438/iis-complains-about-a-locked-section-how-can-i-find-out-where-its-locked)
-- UrlRewrite rule is not enabled
-- Node executable cannot be found
+- [Locked section error](https://serverfault.com/a/516921)
+- **URLs are not being handled by sveltekit**
+  - UrlRewrite rule might not be enabled
+- **Node executable cannot be found**
   - Open global `Configuration Editor` > `system.webServer/iisnode`
     - set `nodeProcessCommandLine` to `C:\Program Files\nodejs\node.exe`
-- Set up file permissions for log dir & for `adapter-iis` dir for IIS_USER or Everyone to allow all
+- **Logs not being written, builds fail if server is running with `EBUSY` fs error.**
+  - Set up file permissions for log dir & for `adapter-iis` dir for IIS_USER or Everyone to allow all
+- **Images or scripts outside of sveltekit (e.g. Virtual Directories, or external) fail to load**
+  - If you are using a full url with `https://` protocol, and have not set up SSL certificates in IIS, it will fail due to 'Cannot provide sercure connection'
+    - If the url's on the same origin, try using a relative URL
+      - example: `/virtual-images/image1.png` instead of `https://localhost:XXXX/virtual-images/image1.png`
+    - If the url's on a different origin, try changing it to `http` instead of `https`
+      - If you're generating the url, on the URL object, you can change the `protocol` key
+      - make sure to build it with `https` once deploying to production
 
 ## `outputWhitelist`
 This adapter also provides `outputWhitelist` in options. This is useful when you need some extra directores on server for the app to function. You can do the following:  

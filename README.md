@@ -1,9 +1,5 @@
 # SvelteKit Adapter IIS
 
-## Differences in this fork:
-- use `node:http` server instead of `express`, so it does not require an external dependency of `express`
-- supports a whitelist array to not be deleted from `.svelte-kit/adapter-iis` during build
-
 This package contains an adapter for Sveltekit that will make your project output deployable to IIS.
 
 ## Usage

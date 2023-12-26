@@ -21,7 +21,7 @@ export interface AdapterOptions extends AdapterNodeAdapterOptions {
 	 * For example:  
 	 * `['cdn']` will allow a virutal directory called `cdn` to work
 	 */
-	externalRoute?: string[]
+	externalRoutes?: string[]
 
 	/** 
 	 * whether external routes should match case-sensitive or not.

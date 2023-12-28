@@ -53,7 +53,7 @@ export default function (options) {
       console.info('Adapting with @sveltejs/adapter-node')
       await na.adapt(builder) // this populates ${outputFolder}/app with other things
       console.info('Finished adapting with @sveltejs/adapter-node')
-      console.info('Adapting with sveltekit-adapter-iis (fork)')
+      console.info('Adapting with sveltekit-adapter-iis')
 
       cleanupOutputDirectory(options?.outputWhitelist ?? [])
       moveOutputToServerFolder()

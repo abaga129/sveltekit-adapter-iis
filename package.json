@@ -1,7 +1,7 @@
 {
   "name": "sveltekit-adapter-iis",
   "version": "1.0.15",
-  "description": "A SvelteKit Adapter for IIS Web Servers (fork)",
+  "description": "A SvelteKit Adapter for IIS Web Servers",
   "main": "index.js",
   "type": "module",
   "repository": {

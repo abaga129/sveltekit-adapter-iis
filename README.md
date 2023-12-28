@@ -61,7 +61,7 @@ npm run build
 - This is useful for local testing with IIS running on your machine
 - You will have to stop the website and possibly IIS every time when re-building.
     
-1 . In IIS Manager add a new Website: `Sites -> Add Website...`
+1 . In IIS Manager add a new Website: `Sites -> Add Website...`  
 2. Set the `Physical Path` to `<your project>/.svelte-kit/adapter-iis`.
 
 ### Option 2: Copying build output elsewhere

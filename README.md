@@ -98,13 +98,16 @@ This is not a complete guide, but it should help.
     - set `nodeProcessCommandLine` to `C:\Program Files\nodejs\node.exe`
 - **Logs not being written, builds fail if server is running with `EBUSY` fs error.**
   - Set up file permissions for log dir & for `adapter-iis` dir for IIS_USER or Everyone to allow all
+  - If they are still not being written, instead of `console.log`, try using `console.warn` - it will show up in `stderr` logs without stopping the server.
+  - IIS likes to often overwrite log files instead of creating new ones, so make sure you open+close your text editor to see the latest log contents.
 - **Images or scripts outside of sveltekit (e.g. Virtual Directories, or external) fail to load**
   - If you are using a full url with `https://` protocol, and have not set up SSL certificates in IIS, it will fail due to 'Cannot provide sercure connection'
     - If the url's on the same origin, try using a relative URL
       - example: `/virtual-images/image1.png` instead of `https://localhost:XXXX/virtual-images/image1.png`
     - If the url's on a different origin, try changing it to `http` instead of `https`
       - If you're generating the url, on the URL object, you can change the `protocol` key
-      - make sure to build it with `https` once deploying to production
+      - make sure to build it with `https` once deploying to production	
+  - You *could* also pobably set the site to use https in IIS, in site settings.
 - **POST requests or form actions fail with error 403**
   - Either you forgot to specify the `origin` option, or it is mismatched
   - Set it like this:
@@ -132,6 +135,7 @@ import { defineConfig, normalizePath } from 'vite';
 import copy from 'rollup-plugin-copy'
 
 // your define config does not need to be a function, i think
+// i did it like this to make sure thecopy plugin only runs when building
 export default defineConfig(({ command }) => {
     const config = {
         // ...

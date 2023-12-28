@@ -105,6 +105,21 @@ This is not a complete guide, but it should help.
     - If the url's on a different origin, try changing it to `http` instead of `https`
       - If you're generating the url, on the URL object, you can change the `protocol` key
       - make sure to build it with `https` once deploying to production
+- **POST requests or form actions fail with error 403**
+  - Either you forgot to specify the `origin` option, or it is mismatched
+  - Set it like this:
+	```js
+	// svelte.config.js
+	const config = {
+		//...
+		kit: {
+			adapter: IISAdapter({ 
+				origin: 'http://localhost:8010' // or whatever the site's origin is when you deploy it using IIS
+			})
+		}
+	}
+	```
+	This sets it in `web.config` during building.
 
 ## `outputWhitelist`
 This adapter also provides `outputWhitelist` in options. This is useful when you need some extra directores on server for the app to function. You can do the following:  
@@ -145,7 +160,10 @@ set the `outputWhitelist`
 const config = {
     //...
     kit: {
-        adapter: IISAdapter({ outputWhitelist: ['db'] })
+        adapter: IISAdapter({ 
+			// origin, ...
+			outputWhitelist: ['db'] 
+		})
     }
 }
 ```
@@ -159,7 +177,10 @@ To make sure sveltekit doesen't block this with a 404, modify `externalRoutes` o
 const config = {
     //...
     kit: {
-        adapter: IISAdapter({ externalRoutes: ['cdn', 'images', 'viewer' ] })
+        adapter: IISAdapter({ 
+			// origin, ...
+			externalRoutes: ['cdn', 'images', 'viewer' ]
+		})
     }
 }
 ```

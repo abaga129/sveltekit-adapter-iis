@@ -58,17 +58,15 @@ export default function (options) {
       cleanupOutputDirectory(options?.outputWhitelist ?? [])
       moveOutputToServerFolder()
 
-			let env = {}
-			if (typeof options.origin !== 'string') {
-				console.warn(`sveltekit-adapter-iis: unspecified option 'origin'!\nForm actions will likely return errror 403: Cross-site POST form submissions are forbidden`)
-			} else {
-				env.origin = options.origin
+			let env = {
+				ADDRESS_HEADER: 'x-forwarded-for',
+				XFF_DEPTH: '1'
 			}
-
+			
 			if (options?.envInWebconfig ?? true) {
 				const envPath = path.resolve(process.cwd(), '.env')
 				if (fs.existsSync(envPath)) {
-					env = parse(fs.readFileSync(envPath, { encoding: 'utf-8' }))
+					Object.assign(env, parse(fs.readFileSync(envPath, { encoding: 'utf-8' })))
 				}
 				console.info(`Included .env variables in web.config`)
 			} else {
@@ -76,15 +74,20 @@ export default function (options) {
 			}
 			for (const key in env) {
 				// XML attributes cannot contain these characters, will result in IIS Error 500.19
-				env[key] = key
+				env[key] = env[key]
 					.replaceAll('"', "&quot;")
 					.replaceAll("'", "&apos;")
 					.replaceAll("<", "&lt;")
 					.replaceAll(">", "&gt;")
 					.replaceAll("&", "&amp;")
-			}
-		
+			}				
 
+			if (typeof options.origin !== 'string') {
+				console.warn(`sveltekit-adapter-iis: unspecified option 'origin'!\nForm actions will likely return errror 403: Cross-site POST form submissions are forbidden`)
+			} else {
+				env.ORIGIN = options.origin
+			}
+				
       const webConfig = createWebConfig({
 				env: env,
 				nodePath: options?.overrideNodeExePath,

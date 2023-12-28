@@ -27,7 +27,8 @@ export function createWebConfig(options) {
 				</rule>
 			</rules>
 		</rewrite>
-		<iisnode watchedFiles="web.config;node_modules\\*;*.js;*.cjs" nodeProcessCommandLine="${options.nodePath ?? 'node.exe'}"/>
+		<!-- enableXFF="true" is required for getClientAddress to work -->
+		<iisnode watchedFiles="web.config;node_modules\\*;*.js;*.cjs" nodeProcessCommandLine="${options.nodePath ?? 'node.exe'}" enableXFF="true" />
 	</system.webServer>
 </configuration>
 `

@@ -1,7 +1,10 @@
-import fs from 'fs-extra'
-import { WEB_CONFIG } from './web.config.js'
-import { EXPRESS_SERVER_CJS } from './express-server.cjs.js'
-import node_adapter from '@sveltejs/adapter-node'
+import fs from 'fs-extra';
+import path from 'node:path';
+import node_adapter from '@sveltejs/adapter-node';
+
+import { createWebConfig } from './web.config.js';
+import { createNodeServer } from './node-server.cjs.js';
+import { parse }  from 'dotenv';
 
 const outputFolder = '.svelte-kit/adapter-iis'
 
@@ -31,10 +34,12 @@ function copyToOutput(path) {
   }
 }
 
-function cleanupOutputDirectory() {
-  if (fs.pathExistsSync(outputFolder)) {
-    fs.rmSync(outputFolder, { recursive: true, force: true })
-  }
+/** @param {string[]} whitelist */
+function cleanupOutputDirectory(whitelist) {
+	const ldir = fs.readdirSync(outputFolder).filter(p => !whitelist.includes(p))
+	for (const thing of ldir) {
+		fs.rmSync(`${outputFolder}/${thing}`, { recursive: true, force: true })
+	}
 }
 
 /** @type {import('.').default} */
@@ -46,25 +51,57 @@ export default function (options) {
     name: 'sveltekit-adapter-iis',
     async adapt(builder) {
       console.info('Adapting with @sveltejs/adapter-node')
-      await na.adapt(builder)
+      await na.adapt(builder) // this populates ${outputFolder}/app with other things
       console.info('Finished adapting with @sveltejs/adapter-node')
       console.info('Adapting with sveltekit-adapter-iis')
 
-      cleanupOutputDirectory()
+      cleanupOutputDirectory(options?.outputWhitelist ?? [])
       moveOutputToServerFolder()
 
-      let webConfig = WEB_CONFIG
-      let nodeExePath =
-        options && options.overrideNodeExePath
-          ? options.overrideNodeExePath
-          : 'node.exe'
+			let env = {
+				ADDRESS_HEADER: 'x-forwarded-for',
+				XFF_DEPTH: '1'
+			}
+			
+			if (options?.envInWebconfig ?? true) {
+				const envPath = path.resolve(process.cwd(), '.env')
+				if (fs.existsSync(envPath)) {
+					Object.assign(env, parse(fs.readFileSync(envPath, { encoding: 'utf-8' })))
+				}
+				console.info(`Included .env variables in web.config`)
+			} else {
+				console.info(`Didn't include .env variables in web.config (disabled)`)
+			}
+			for (const key in env) {
+				// XML attributes cannot contain these characters, will result in IIS Error 500.19
+				env[key] = env[key]
+					.replaceAll('"', "&quot;")
+					.replaceAll("'", "&apos;")
+					.replaceAll("<", "&lt;")
+					.replaceAll(">", "&gt;")
+					.replaceAll("&", "&amp;")
+			}				
 
-      webConfig = webConfig.replace('{{NODE_PATH}}', nodeExePath)
+			if (typeof options.origin !== 'string') {
+				console.warn(`sveltekit-adapter-iis: unspecified option 'origin'!\nForm actions will likely return errror 403: Cross-site POST form submissions are forbidden`)
+			} else {
+				env.ORIGIN = options.origin
+			}
+				
+      const webConfig = createWebConfig({
+				env: env,
+				nodePath: options?.overrideNodeExePath,
+				externalRoutes: options?.externalRoutes,
+				externalRoutesIgnoreCase: options?.externalRoutesIgnoreCase
+			})
+			const nodeServer = createNodeServer(options?.healthcheckRoute ?? true)
+
       writeFileToOutput(webConfig, 'web.config')
-      writeFileToOutput(EXPRESS_SERVER_CJS, 'express-server.cjs')
+      writeFileToOutput(nodeServer, 'node-server.cjs')
       copyToOutput('package.json')
       copyToOutput('package-lock.json')
       copyToOutput('yarn.lock')
+			copyToOutput('pnpm-lock.yml')
 
       console.info('Finished adapting with sveltekit-adapter-iis')
     },

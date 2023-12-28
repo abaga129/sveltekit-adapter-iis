@@ -35,11 +35,26 @@ export interface AdapterOptions extends AdapterNodeAdapterOptions {
 	 * @default true
 	 */
 	healthcheckRoute?: boolean
+
+	/** 
+	 * add your .env file in the web.config during build
+	 * if disabled, pass your environment variables to iisnode in a different way
+	 * @default true
+	 */
+	envInWebconfig?: boolean
+
+	/** 
+	 * the site's origin when deployed to IIS
+	 * will be added as the ORIGIN env variable in web.config
+	 * if not specified, form actions will likely return errror 403: Cross-site POST form submissions are forbidden
+	 */
+	origin: string
 }
 
 export default function plugin(options?: AdapterOptions): Adapter;
 
 export interface createWebConfigOptions {
+	env: Record<string, string|number>,
 	nodePath?: string,
 	externalRoutes?: AdapterOptions['externalRoutes'],
 	externalRoutesIgnoreCase?: AdapterOptions['externalRoutesIgnoreCase']

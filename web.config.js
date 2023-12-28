@@ -4,6 +4,11 @@ export function createWebConfig(options) {
 	// <?xml version="1.0" encoding="utf-8"?> has to be on the first line!
 	return `<?xml version="1.0" encoding="utf-8"?>
 <configuration>
+	${options.env ? `
+	<appSettings>
+		${Object.entries(options.env).map(([key, val]) => `<add key="${key}" value="${val}" />`).join("\n\t\t")}
+	</appSettings>
+	` : ''}
 	<system.webServer>
 		<handlers>
 			<!-- Indicates that the server.js file is a node.js site to be handled by the iisnode module -->

@@ -1,12 +1,16 @@
-export function createNodeServer(healthcheck = true, fallbackDefaultPort = 3000) {
-	return `const http = require('node:http')
+export function createNodeServer(
+  healthcheck = true,
+  fallbackDefaultPort = 3000
+) {
+  return `const http = require('node:http')
 import('./app/handler.js')
 	.then((handler) => {
 		const server = http.createServer((req, res) => {
-			${healthcheck
-				? `if (req.url === '/healthcheck' && req.method === 'GET') { res.end('ok'); } else { handler.handler(req, res); }`
-				: `handler.handler(req, res);`
-			}
+			${
+        healthcheck
+          ? `if (req.url === '/healthcheck' && req.method === 'GET') { res.end('ok'); } else { handler.handler(req, res); }`
+          : `handler.handler(req, res);`
+      }
 		});
 
 		const PORT = process.env.PORT || ${fallbackDefaultPort};
@@ -16,4 +20,3 @@ import('./app/handler.js')
 		});
 	}).catch((err) => console.error(err));`
 }
-

@@ -45,8 +45,8 @@ function cleanupOutputDirectory(whitelist) {
 }
 
 function createOutputDirectory() {
-  if (!fs.exists(outputFolder)) {
-    fs.mkdirSync(outputFolder)
+  if (!fs.existsSync(outputFolder, err => console.warn(err))) {
+    fs.mkdirSync(outputFolder, {recursive: true}, err => {console.warn(err)})
   }
 }
 

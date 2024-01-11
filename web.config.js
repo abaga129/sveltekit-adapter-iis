@@ -21,12 +21,19 @@ export function createWebConfig(options) {
 			<add name="iisnode" path="node-server.cjs" verb="*" modules="iisnode" />
 		</handlers>
 		<rewrite>
-			<rules>
-				<!-- external routes that should be handled by IIS. For example, virtual directories -->
-				<rule name="block" stopProcessing="true">
-					<match url="^(${routes.join('|')})/*" ignoreCase="${
-            options.externalRoutesIgnoreCase ?? true
-          }" />
+			<rules>${
+        routes.length > 0
+          ? `
+                <!-- external routes that should be handled by IIS. For example, virtual directories -->
+                <rule name="block" stopProcessing="true">
+                    <match url="^(${routes.join('|')})/*" ignoreCase="${
+                      options.externalRoutesIgnoreCase ?? true
+                    }" />
+                    <action type="None" />
+                </rule>
+            `
+          : ''
+      }
 					<action type="None" />
 				</rule>
 				<rule name="app">

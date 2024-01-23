@@ -8,20 +8,14 @@ This package contains an adapter for Sveltekit that will make your project outpu
 
 1. Install to your sveltekit project
 
-### from github
-
-```bash
-pnpm add -D github:KraXen72/sveltekit-adapter-iis
-```
-
-### from npm
-
-Will be available later
+### From npm
 
 ```bash
 pnpm add -D sveltekit-adapter-iis
 #or
 npm i sveltekit-adapter-iis --save-dev
+#or
+yarn add sveltekit-adapter-iis --dev
 ```
 
 2. In your `svelte.config.js` file replace default adapter with `IISAdapter`

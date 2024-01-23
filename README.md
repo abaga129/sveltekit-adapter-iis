@@ -1,5 +1,7 @@
 # SvelteKit Adapter IIS
 
+[![Svelte](https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white)](https://sveltesociety.dev/packages?category=sveltekit-adapters)[![NPM](https://img.shields.io/badge/NPM-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/sveltekit-adapter-iis)![PNPM](https://img.shields.io/badge/pnpm-%234a4a4a.svg?style=for-the-badge&logo=pnpm&logoColor=f69220)
+
 This package contains an adapter for Sveltekit that will make your project output deployable to IIS.
 
 ## Usage

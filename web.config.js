@@ -1,6 +1,17 @@
 /** @param {import('.').createWebConfigOptions} options */
 export function createWebConfig(options) {
   const routes = Array.from(new Set(options.externalRoutes ?? []))
+  const blockRule =
+    routes.length > 0
+      ? `
+				<!-- external routes that should be handled by IIS. For example, virtual directories -->
+				<rule name="block" stopProcessing="true">
+					<match url="^(${routes.join('|')})/*" ignoreCase="${
+          options.externalRoutesIgnoreCase ?? true
+        }" />
+					<action type="None" />
+				</rule>`
+      : ''
   // <?xml version="1.0" encoding="utf-8"?> has to be on the first line!
   return `<?xml version="1.0" encoding="utf-8"?>
 <configuration>
@@ -21,14 +32,7 @@ export function createWebConfig(options) {
 			<add name="iisnode" path="node-server.cjs" verb="*" modules="iisnode" />
 		</handlers>
 		<rewrite>
-			<rules>
-				<!-- external routes that should be handled by IIS. For example, virtual directories -->
-				<rule name="block" stopProcessing="true">
-					<match url="^(${routes.join('|')})/*" ignoreCase="${
-            options.externalRoutesIgnoreCase ?? true
-          }" />
-					<action type="None" />
-				</rule>
+			<rules>${blockRule}
 				<rule name="app">
 					<match url="/*" />
 					<action type="Rewrite" url="node-server.cjs" />

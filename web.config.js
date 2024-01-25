@@ -7,9 +7,21 @@ export function createWebConfig(options) {
 				<!-- external routes that should be handled by IIS. For example, virtual directories -->
 				<rule name="block" stopProcessing="true">
 					<match url="^(${routes.join('|')})/*" ignoreCase="${
-          options.externalRoutesIgnoreCase ?? true
-        }" />
+            options.externalRoutesIgnoreCase ?? true
+          }" />
 					<action type="None" />
+				</rule>`
+      : ''
+  const redirectToHttps =
+    options.redirectToHttps ?? false
+      ? `
+				<!-- Redirects requests to https -->
+				<rule name="Redirect to https" stopProcessing="true">
+					<match url=".*" />
+					<conditions>
+						<add input="{HTTPS}" pattern="off" ignoreCase="true" />
+					</conditions>
+					<action type="Redirect" url="https://{HTTP_HOST}{REQUEST_URI}" redirectType="Permanent" appendQueryString="false" />
 				</rule>`
       : ''
   // <?xml version="1.0" encoding="utf-8"?> has to be on the first line!
@@ -32,7 +44,7 @@ export function createWebConfig(options) {
 			<add name="iisnode" path="node-server.cjs" verb="*" modules="iisnode" />
 		</handlers>
 		<rewrite>
-			<rules>${blockRule}
+			<rules>${redirectToHttps}${blockRule}
 				<rule name="app">
 					<match url="/*" />
 					<action type="Rewrite" url="node-server.cjs" />

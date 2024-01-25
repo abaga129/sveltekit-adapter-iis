@@ -107,6 +107,7 @@ export default function (options) {
         nodePath: options?.overrideNodeExePath,
         externalRoutes: options?.externalRoutes,
         externalRoutesIgnoreCase: options?.externalRoutesIgnoreCase,
+        redirectToHttps: options?.redirectToHttps
       })
       const nodeServer = createNodeServer(options?.healthcheckRoute ?? true)
 

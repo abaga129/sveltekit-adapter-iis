@@ -7,8 +7,8 @@ export function createWebConfig(options) {
 				<!-- external routes that should be handled by IIS. For example, virtual directories -->
 				<rule name="block" stopProcessing="true">
 					<match url="^(${routes.join('|')})/*" ignoreCase="${
-            options.externalRoutesIgnoreCase ?? true
-          }" />
+          options.externalRoutesIgnoreCase ?? true
+        }" />
 					<action type="None" />
 				</rule>`
       : ''

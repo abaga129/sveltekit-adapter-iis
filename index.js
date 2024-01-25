@@ -24,8 +24,19 @@ function moveOutputToServerFolder() {
   })
 }
 
+function getEnvs() {
+	const cwdFiles = fs.readdirSync(process.cwd())
+		.filter(p => p === ".env" || p.startsWith(".env."))
+		.map(p => [p, p === ".env" ? false : p.slice(5)]) 
+	return cwdFiles.length > 0 ? cwdFiles : [["", ""]];
+}
+
 function writeFileToOutput(fileContents, fileName) {
   fs.writeFileSync(`${outputFolder}/${fileName}`, fileContents)
+}
+
+function xmlEscape(str) {
+	return str.replaceAll('"', "&quot;").replaceAll("'", "&apos;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;")
 }
 
 function copyToOutput(path) {
@@ -67,51 +78,46 @@ export default function (options) {
       cleanupOutputDirectory(options?.outputWhitelist ?? [])
       moveOutputToServerFolder()
 
-      let env = {
-        ADDRESS_HEADER: 'x-forwarded-for',
-        XFF_DEPTH: '1',
-      }
+			const nodeServer = createNodeServer(options?.healthcheckRoute ?? true)
+			writeFileToOutput(nodeServer, 'node-server.cjs')
 
-      if (options?.envInWebconfig ?? true) {
-        const envPath = path.resolve(process.cwd(), '.env')
-        if (fs.existsSync(envPath)) {
-          Object.assign(
-            env,
-            parse(fs.readFileSync(envPath, { encoding: 'utf-8' }))
-          )
-        }
-        console.info(`Included .env variables in web.config`)
-      } else {
-        console.info(`Didn't include .env variables in web.config (disabled)`)
-      }
-      for (const key in env) {
-        // XML attributes cannot contain these characters, will result in IIS Error 500.19
-        env[key] = env[key]
-          .replaceAll('"', '&quot;')
-          .replaceAll("'", '&apos;')
-          .replaceAll('<', '&lt;')
-          .replaceAll('>', '&gt;')
-          .replaceAll('&', '&amp;')
-      }
+			let defaultEnv = {
+				ADDRESS_HEADER: 'x-forwarded-for',
+				XFF_DEPTH: '1'
+			}
+			if (typeof options.origin !== 'string') {
+				console.warn(`sveltekit-adapter-iis: unspecified option 'origin'!\nForm actions will likely return errror 403: Cross-site POST form submissions are forbidden`)
+			} else {
+				defaultEnv.ORIGIN = options.origin
+			}
+			
+			for (const [envFn, stage] of getEnvs()) {
+				const env = {...defaultEnv}
+				const wcFilename = stage ? `web.${stage}.config` : 'web.config'
 
-      if (typeof options.origin !== 'string') {
-        console.warn(
-          `sveltekit-adapter-iis: unspecified option 'origin'!\nForm actions will likely return errror 403: Cross-site POST form submissions are forbidden`
-        )
-      } else {
-        env.ORIGIN = options.origin
-      }
-
-      const webConfig = createWebConfig({
-        env: env,
-        nodePath: options?.overrideNodeExePath,
-        externalRoutes: options?.externalRoutes,
-        externalRoutesIgnoreCase: options?.externalRoutesIgnoreCase,
-      })
-      const nodeServer = createNodeServer(options?.healthcheckRoute ?? true)
-
-      writeFileToOutput(webConfig, 'web.config')
-      writeFileToOutput(nodeServer, 'node-server.cjs')
+				if (options?.envInWebconfig ?? true) {
+					const envPath = path.resolve(process.cwd(), envFn)
+					if (fs.existsSync(envPath)) {
+						Object.assign(env, parse(fs.readFileSync(envPath, { encoding: 'utf-8' })))
+					} else {
+						console.warn(`Didn't include ${envFn} variables in ${wcFilename} (${envPath} does not exist!)`)
+					}
+					console.info(`Included ${envFn} variables in ${wcFilename}`)
+				} else {
+					console.info(`Didn't include ${envFn} variables in ${wcFilename} (disabled)`)
+				}
+				// XML attributes cannot contain these characters, will result in IIS Error 500.19
+				for (const key in env) { env[key] = xmlEscape(env[key]) };
+				
+				const webConfig = createWebConfig({
+					env: env,
+					nodePath: options?.overrideNodeExePath,
+					externalRoutes: options?.externalRoutes,
+					externalRoutesIgnoreCase: options?.externalRoutesIgnoreCase
+				})
+				writeFileToOutput(webConfig, wcFilename)
+			}
+			
       copyToOutput('package.json')
       copyToOutput('package-lock.json')
       copyToOutput('yarn.lock')

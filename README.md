@@ -222,6 +222,21 @@ When providing environment variables through a `.env` file, the adapter will als
 
 Read more about XML Transformations here: [XML Transformation in Azure Pipelines](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/transforms-variable-substitution?view=azure-devops&tabs=Classic#xml-transformation)
 
+## Redirecting requests to HTTPS
+```js
+// svelte.config.js
+const config = {
+  //...
+  kit: {
+    adapter: IISAdapter({
+      // origin, ...
+      redirectToHttps: true,
+    }),
+  },
+}
+```
+By setting the option `redirectToHttps` to `true`, a URL Rewrite rule is applied to the `web.config` file that redirect all non-HTTPS request to HTTPS.
+
 ## Disclaimer
 
 Note that this only works when served from the root of a domain.

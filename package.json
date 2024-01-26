@@ -24,7 +24,7 @@
   "author": "Ethan P. Reker",
   "license": "MIT",
   "devDependencies": {
-    "@sveltejs/adapter-node": "^4.0.1",
+    "@sveltejs/adapter-node": "^2.1.2",
     "@sveltejs/kit": "^2.0.4",
     "@types/node": "^20.10.5",
     "dotenv": "^16.4.1",

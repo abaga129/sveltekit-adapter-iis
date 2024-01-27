@@ -128,14 +128,14 @@ export default function (options) {
           env[key] = xmlEscape(env[key])
         }
 
-        const webConfig = createWebConfig({
-          env: env,
-          nodePath: options?.overrideNodeExePath,
-          externalRoutes: options?.externalRoutes,
-          externalRoutesIgnoreCase: options?.externalRoutesIgnoreCase,
-        })
-        writeFileToOutput(webConfig, wcFilename)
-      }
+      const webConfig = createWebConfig({
+        env: env,
+        nodePath: options?.overrideNodeExePath,
+        externalRoutes: options?.externalRoutes,
+        externalRoutesIgnoreCase: options?.externalRoutesIgnoreCase,
+				redirectToHttps: options?.redirectToHttps
+      })
+      const nodeServer = createNodeServer(options?.healthcheckRoute ?? true)
 
       copyToOutput('package.json')
       copyToOutput('package-lock.json')

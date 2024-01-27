@@ -217,6 +217,21 @@ By default, since IIS can be quite tricky to set up, the adapter adds a simple `
 This is useful if you want to determine that the node server is running, but your main site isn't loading for whatever reson.
 The route can be turned off setting the `healthcheckRoute` adapter option to `false`. (A re-build is needed to take effect.)
 
+## Redirecting requests to HTTPS
+```js
+// svelte.config.js
+const config = {
+  //...
+  kit: {
+    adapter: IISAdapter({
+      // origin, ...
+      redirectToHttps: true,
+    }),
+  },
+}
+```
+By setting the option `redirectToHttps` to `true`, a URL Rewrite rule is applied to the `web.config` file that redirect all non-HTTPS request to HTTPS.
+
 ## Disclaimer
 
 Note that this only works when served from the root of a domain.

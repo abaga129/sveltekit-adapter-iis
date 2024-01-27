@@ -49,6 +49,12 @@ export interface AdapterOptions extends AdapterNodeAdapterOptions {
    * if not specified, form actions will likely return errror 403: Cross-site POST form submissions are forbidden
    */
   origin: string
+
+  /**
+   * whether to redirect http to https or not.
+   * @default false
+   */
+  redirectToHttps?: boolean
 }
 
 export default function plugin(options?: AdapterOptions): Adapter
@@ -57,5 +63,6 @@ export interface createWebConfigOptions {
   env: Record<string, string | number>
   nodePath?: string
   externalRoutes?: AdapterOptions['externalRoutes']
-  externalRoutesIgnoreCase?: AdapterOptions['externalRoutesIgnoreCase']
+  externalRoutesIgnoreCase?: AdapterOptions['externalRoutesIgnoreCase'],
+  redirectToHttps?: AdapterOptions['redirectToHttps']
 }

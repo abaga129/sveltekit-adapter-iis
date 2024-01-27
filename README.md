@@ -218,6 +218,7 @@ This is useful if you want to determine that the node server is running, but you
 The route can be turned off setting the `healthcheckRoute` adapter option to `false`. (A re-build is needed to take effect.)
 
 ## Redirecting requests to HTTPS
+
 ```js
 // svelte.config.js
 const config = {
@@ -230,6 +231,7 @@ const config = {
   },
 }
 ```
+
 By setting the option `redirectToHttps` to `true`, a URL Rewrite rule is applied to the `web.config` file that redirect all non-HTTPS request to HTTPS.
 
 ## Disclaimer

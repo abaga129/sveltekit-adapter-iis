@@ -63,6 +63,6 @@ export interface createWebConfigOptions {
   env: Record<string, string | number>
   nodePath?: string
   externalRoutes?: AdapterOptions['externalRoutes']
-  externalRoutesIgnoreCase?: AdapterOptions['externalRoutesIgnoreCase'],
+  externalRoutesIgnoreCase?: AdapterOptions['externalRoutesIgnoreCase']
   redirectToHttps?: AdapterOptions['redirectToHttps']
 }

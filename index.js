@@ -102,32 +102,32 @@ export default function (options) {
       }
 
       for (const [envFn, stage] of getEnvs()) {
-				const wcFilename = stage ? `web.${stage}.config` : 'web.config'
+        const wcFilename = stage ? `web.${stage}.config` : 'web.config'
         const env = {}
-				if (wcFilename === 'web.config') Object.assign(env, defaultEnv)
-				
-				if (options?.envInWebconfig ?? true) {
-					const envPath = path.resolve(process.cwd(), envFn)
-					if (fs.existsSync(envPath)) {
-						Object.assign(
-							env,
-							parse(fs.readFileSync(envPath, { encoding: 'utf-8' }))
-						)
-					} else {
-						console.warn(
-							`Didn't include ${envFn} variables in ${wcFilename} (${envPath} does not exist!)`
-						)
-					}
-					console.info(`Included ${envFn} variables in ${wcFilename}`)
-				} else {
-					console.info(
-						`Didn't include ${envFn} variables in ${wcFilename} (disabled)`
-					)
-				}
-				// XML attributes cannot contain these characters, will result in IIS Error 500.19
-				for (const key in env) {
-					env[key] = xmlEscape(env[key])
-				}
+        if (wcFilename === 'web.config') Object.assign(env, defaultEnv)
+
+        if (options?.envInWebconfig ?? true) {
+          const envPath = path.resolve(process.cwd(), envFn)
+          if (fs.existsSync(envPath)) {
+            Object.assign(
+              env,
+              parse(fs.readFileSync(envPath, { encoding: 'utf-8' }))
+            )
+          } else {
+            console.warn(
+              `Didn't include ${envFn} variables in ${wcFilename} (${envPath} does not exist!)`
+            )
+          }
+          console.info(`Included ${envFn} variables in ${wcFilename}`)
+        } else {
+          console.info(
+            `Didn't include ${envFn} variables in ${wcFilename} (disabled)`
+          )
+        }
+        // XML attributes cannot contain these characters, will result in IIS Error 500.19
+        for (const key in env) {
+          env[key] = xmlEscape(env[key])
+        }
 
         const webConfig =
           wcFilename === 'web.config'

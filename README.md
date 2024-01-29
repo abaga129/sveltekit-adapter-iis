@@ -217,6 +217,11 @@ By default, since IIS can be quite tricky to set up, the adapter adds a simple `
 This is useful if you want to determine that the node server is running, but your main site isn't loading for whatever reson.
 The route can be turned off setting the `healthcheckRoute` adapter option to `false`. (A re-build is needed to take effect.)
 
+## Handling stage specific environment variables
+When providing environment variables through a `.env` file, the adapter will also look for any `.env.{stage}` files in order to create `web.{stage}.config` transformation files in `.svelte-kit/adapter-iis`. These transformation files can later be used to perform XML Transformation steps in your CI/CD pipelines based on which stage is being deployed to.
+
+Read more about XML Transformations here: [XML Transformation in Azure Pipelines](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/transforms-variable-substitution?view=azure-devops&tabs=Classic#xml-transformation)
+
 ## Redirecting requests to HTTPS
 
 ```js

@@ -81,7 +81,7 @@ export function createWebConfig(options) {
 
 export function createXMLTransform(env) {
   return `<?xml version="1.0" encoding="utf-8"?>
-<configuration xmlns:xdt="https://schemas.microsoft.com/XML-Document-Transform">
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
 	${createAppSettingsEnv(env, true)}
 </configuration>
 `

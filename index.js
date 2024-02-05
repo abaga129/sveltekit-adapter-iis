@@ -12,6 +12,7 @@ function moveOutputToServerFolder() {
   const fileList = [
     'client',
     'server',
+    'prerendered',
     'env.js',
     'handler.js',
     'index.js',
@@ -20,6 +21,14 @@ function moveOutputToServerFolder() {
   fileList.forEach((f) => {
     const from = `build/${f}`
     const to = `${outputFolder}/app/${f}`
+
+    try {
+        fs.accessSync(from, fs.constants.F_OK)
+    } catch (err) {
+        // File doesn't exist
+        return
+    }
+
     fs.moveSync(from, to, (err) => console.error(err))
   })
 }

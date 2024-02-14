@@ -104,7 +104,7 @@ export default function (options) {
       }
       if (typeof options.origin !== 'string') {
         console.warn(
-          `sveltekit-adapter-iis: unspecified option 'origin'!\nForm actions will likely return errror 403: Cross-site POST form submissions are forbidden`
+          `sveltekit-adapter-iis: unspecified option 'origin'!\nForm actions will likely return error 403: Cross-site POST form submissions are forbidden`
         )
       } else {
         defaultEnv.ORIGIN = options.origin
@@ -117,17 +117,22 @@ export default function (options) {
 
         if (options?.envInWebconfig ?? true) {
           const envPath = path.resolve(process.cwd(), envFn)
-          if (fs.existsSync(envPath)) {
+          if (fs.existsSync(envPath) && envFn !== '') {
             Object.assign(
               env,
               parse(fs.readFileSync(envPath, { encoding: 'utf-8' }))
             )
+
+            console.info(`Included ${envFn} variables in ${wcFilename}`);
           } else {
-            console.warn(
-              `Didn't include ${envFn} variables in ${wcFilename} (${envPath} does not exist!)`
-            )
+            if (envFn === '') {
+              console.warn(`Didn't include environment variables (No .env found)`);
+            } else {
+              console.warn(
+                `Didn't include ${envFn} variables in ${wcFilename} (${envPath} does not exist!)`
+              )
+            }
           }
-          console.info(`Included ${envFn} variables in ${wcFilename}`)
         } else {
           console.info(
             `Didn't include ${envFn} variables in ${wcFilename} (disabled)`

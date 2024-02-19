@@ -92,8 +92,8 @@ This is not a complete guide, but it should help.
 6. Unlock the section in global config (More information needed)
 7. Set some permission to `Read/Write` instead of `Read Only` (More information needed)
 8. Set up logs:
-   - Create a logging directory, for example `D:/coding/iislogs`
-   - Open global `Configuration Editor` > `system.webServer/iisnode` > set `logDirectory`
+   - Set `iisNodeOptions.loggingEnabled` to `true` in the adapter options
+   - (Optional) Configure a path for the logs using `iisNodeOptions.logDirectory`
 
 ## IIS troubleshooting
 
@@ -101,16 +101,18 @@ This is not a complete guide, but it should help.
 - **URLs are not being handled by sveltekit**
   - UrlRewrite rule might not be enabled
 - **Node executable cannot be found**
-  - By default the nodeExePath is set to `node.exe` to override this set `overrideNodeExePath`.
+  - By default the nodeExePath is set to `node.exe` to override this set `iisNodeOptions.overrideNodeExePath`.
   ```js
   const config = {
     //...
     kit: {
       adapter: IISAdapter({
-        overrideNodeExePath: 'C:\\Program Files\\nodejs\\node.exe', // or whatever the node.exe path is
+        iisNodeOptions: {
+          nodeProcessCommandLine: 'C:\\Program Files\\nodejs\\node.exe', // or whatever the path is
+        },
       }),
     },
-  };
+  }
   ```
 - **Logs not being written, builds fail if server is running with `EBUSY` fs error.**
   - Set up file permissions for log dir & for `adapter-iis` dir for IIS_USER or Everyone to allow all
@@ -227,6 +229,7 @@ This is useful if you want to determine that the node server is running, but you
 The route can be turned off setting the `healthcheckRoute` adapter option to `false`. (A re-build is needed to take effect.)
 
 ## Handling stage specific environment variables
+
 When providing environment variables through a `.env` file, the adapter will also look for any `.env.{stage}` files in order to create `web.{stage}.config` transformation files in `.svelte-kit/adapter-iis`. These transformation files can later be used to perform XML Transformation steps in your CI/CD pipelines based on which stage is being deployed to.
 
 Read more about XML Transformations here: [XML Transformation in Azure Pipelines](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/transforms-variable-substitution?view=azure-devops&tabs=Classic#xml-transformation)

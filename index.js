@@ -8,6 +8,25 @@ import { parse } from 'dotenv'
 
 const outputFolder = '.svelte-kit/adapter-iis'
 
+const LOCK_FILES = [
+  {
+    packageManager: 'npm',
+    fileName: 'package-lock.json',
+  },
+  {
+    packageManager: 'yarn',
+    fileName: 'yarn.lock',
+  },
+  {
+    packageManager: 'pnpm',
+    fileName: 'pnpm-lock.yml',
+  },
+  {
+    packageManager: 'bun',
+    fileName: 'bun.lockb',
+  },
+]
+
 function moveOutputToServerFolder() {
   const fileList = [
     'client',
@@ -165,15 +184,23 @@ export default function (options) {
 
         writeFileToOutput(webConfig, wcFilename)
       }
+
       copyToOutput('package.json')
-      // npm
-      copyToOutput('package-lock.json')
-      // yarn
-      copyToOutput('yarn.lock')
-      // pnpm
-      copyToOutput('pnpm-lock.yml')
-      // bun
-      copyToOutput('bun.lockb')
+
+      if (typeof options.packageManager != 'string')
+        console.warn(
+          'No package manager provided. Providing a package manager can speed up build times consider adding one using the `packageManager` property.'
+        )
+
+      LOCK_FILES.forEach((lockFile) => {
+        // When the package manager is supplied attempt to copy all lock files
+        if (
+          !options.packageManager ||
+          lockFile.packageManager == options.packageManager
+        ) {
+          copyToOutput(lockFile.fileName)
+        }
+      })
 
       console.info('Finished adapting with sveltekit-adapter-iis')
     },

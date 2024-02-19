@@ -56,6 +56,9 @@ export interface AdapterOptions extends AdapterNodeAdapterOptions {
    */
   redirectToHttps?: boolean
 
+  /** Determines which lock file to copy. Can save time searching for the lock file when supplied. */
+  packageManager?: 'npm' | 'pnpm' | 'bun' | 'yarn'
+
   /** Allows you to configure the behavior of IISNode */
   iisNodeOptions?: IISNodeOptions
 }

@@ -101,8 +101,17 @@ This is not a complete guide, but it should help.
 - **URLs are not being handled by sveltekit**
   - UrlRewrite rule might not be enabled
 - **Node executable cannot be found**
-  - Open global `Configuration Editor` > `system.webServer/iisnode`
-    - set `nodeProcessCommandLine` to `C:\Program Files\nodejs\node.exe`
+  - By default the nodeExePath is set to `node.exe` to override this set `overrideNodeExePath`.
+  ```js
+  const config = {
+    //...
+    kit: {
+      adapter: IISAdapter({
+        overrideNodeExePath: 'C:\\Program Files\\nodejs\\node.exe', // or whatever the node.exe path is
+      }),
+    },
+  };
+  ```
 - **Logs not being written, builds fail if server is running with `EBUSY` fs error.**
   - Set up file permissions for log dir & for `adapter-iis` dir for IIS_USER or Everyone to allow all
   - If they are still not being written, instead of `console.log`, try using `console.warn` - it will show up in `stderr` logs without stopping the server.

@@ -52,15 +52,18 @@ function createIISNodeConfig(options) {
 
   let attributes = ''
 
-  if (options) Object.entries(options).forEach(([key,value]) => attributes += ` ${key}="${value}"`)
+  if (options)
+    Object.entries(options).forEach(
+      ([key, value]) => (attributes += ` ${key}="${value}"`)
+    )
 
   // Add defaults if not included
   Object.entries(defaults).forEach(([key, value]) => {
-    if (options && options[key]) return;
+    if (options && options[key]) return
 
     attributes += ` ${key}="${value}"`
-  });
- 
+  })
+
   return `<iisnode${attributes} />`
 }
 

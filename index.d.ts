@@ -2,7 +2,7 @@ import { Adapter } from '@sveltejs/kit'
 import type { AdapterOptions as AdapterNodeAdapterOptions } from '@sveltejs/adapter-node'
 
 export interface AdapterOptions extends AdapterNodeAdapterOptions {
-  /** @deprecated use iisNodeOptions instead */
+  /** @deprecated use `iisNodeOptions.nodeProcessCommandLine` instead */
   overrideNodeExePath?: string
 
   /**
@@ -11,7 +11,7 @@ export interface AdapterOptions extends AdapterNodeAdapterOptions {
    * For example:
    * `['db']` will whitelist `.svelte-kit/adapter-iis/db` and all contents
    */
-  outputWhitelist: string[]
+  outputWhitelist?: string[]
 
   /**
    * routes, which should not get handled by sveltekit and fall to IIS.
@@ -56,81 +56,78 @@ export interface AdapterOptions extends AdapterNodeAdapterOptions {
    */
   redirectToHttps?: boolean
 
-  /** Determines which lock file to copy. Can save time searching for the lock file when supplied. */
-  packageManager?: 'npm' | 'pnpm' | 'bun' | 'yarn'
-
   /** Allows you to configure the behavior of IISNode */
   iisNodeOptions?: IISNodeOptions
 }
 
 export interface IISNodeOptions {
-  /** Default is `iisnode.yml` */
+  /** @default "iisnode.yml" */
   configOverrides?: string
-  /** Default is `debug` */
+  /** @default "debug" */
   debuggerPathSegment?: string
-  /** Default is `5058-6058` */
+  /** @default "5058-6058" */
   debuggerPortRange?: string
-  /** Default is `""` */
+  /** @default "" */
   debuggerVirtualDir?: string
-  /** Default is `true` */
+  /** @default true */
   debuggingEnabled?: boolean
-  /** Default is `false` */
+  /** @default false */
   debugHeaderEnabled?: boolean
-  /** Default is `true` */
+  /** @default true */
   debErrorsEnabled?: boolean
-  /** Default is `true` */
+  /** @default true */
   enableXFF?: boolean
-  /** Default is `false` */
+  /** @default false */
   flushResponse?: boolean
-  /** Default is `60000` */
+  /** @default 60000 */
   gracefulShutdownTimeout?: number
-  /** Default is `0` */
+  /** @default 0 */
   idlePageOutTimePeriod?: number
-  /** Default is `4096` */
+  /** @default 4096 */
   initialRequestBufferSize?: number
-  /** Default is `C:\Program Files\iisnode\interceptor.js` */
+  /** @default "C:\Program Files\iisnode\interceptor.js" */
   interceptor?: string
-  /** Directory where logs from ISSNode will be location.
+  /** Directory where logs from ISSNode will be location. Can be an absolute or relative path.
    *
-   * Default is `iisnode` which is an relative path to `My App/iisnode` */
+   * @default "iisnode" */
   logDirectory?: string
   /** Enables issnode logging. Useful for debugging runtime errors with your application.
    *
-   * Default is `false` */
+   * @default false */
   loggingEnabled?: boolean
-  /** Default is `1024` */
+  /** @default 1024 */
   maxConcurrentRequestsPerProcess?: number
-  /** Default is `20` */
+  /** @default 20 */
   maxLogFiles?: number
-  /** Default is `128` */
+  /** @default 128 */
   maxLogFileSizeInKB?: number
-  /** Default is `512` */
+  /** @default 512 */
   maxNamedPipeConnectionPoolSize?: number
-  /** Default is `100` */
+  /** @default 100 */
   maxNamedPipeConnectionRetry?: number
-  /** Default is `30000` */
+  /** @default 30000 */
   maxNamedPipePooledConnectionAge?: number
-  /** Default is `65536` */
+  /** @default 65536 */
   maxRequestBufferSize?: number
-  /** Default is `1024` */
+  /** @default 1024 */
   maxTotalLogFileSizeInKB?: number
-  /** Default is `250` */
+  /** @default 250 */
   namedPipeConnectionRetryDelay?: number
-  /** Default is `%node_env%` */
+  /** @default "%node_env%" */
   node_env?: string
   /** Path to the node.exe.
    *
-   *  Default is `node.exe` */
+   *  @default "node.exe" */
   nodeProcessCommandLine?: string
-  /** Default is `1` */
+  /** @default 1 */
   nodeProcessCountPerApplication?: number
-  /** Default is `""` */
+  /** @default "" */
   remoteServerVars?: string
-  /** Default is `false` */
+  /** @default false */
   recycleSignalEnabled?: boolean
-  /** Default is `5000` */
+  /** @default 5000 */
   uncFileChangesPollingInterval?: number
-  /** Default is `web.config;node_modules\*;*.js;*.cjs` */
+  /** @default "web.config;node_modules\*;*.js;*.cjs" */
   watchedFiles?: string
 }
 

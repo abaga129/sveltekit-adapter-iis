@@ -1,6 +1,7 @@
 import fs from 'fs-extra'
 import path from 'node:path'
 import node_adapter from '@sveltejs/adapter-node'
+import { detect } from 'detect-package-manager'
 
 import { createWebConfig, createXMLTransform } from './web.config.js'
 import { createNodeServer } from './node-server.cjs.js'
@@ -8,24 +9,12 @@ import { parse } from 'dotenv'
 
 const outputFolder = '.svelte-kit/adapter-iis'
 
-const LOCK_FILES = [
-  {
-    packageManager: 'npm',
-    fileName: 'package-lock.json',
-  },
-  {
-    packageManager: 'yarn',
-    fileName: 'yarn.lock',
-  },
-  {
-    packageManager: 'pnpm',
-    fileName: 'pnpm-lock.yml',
-  },
-  {
-    packageManager: 'bun',
-    fileName: 'bun.lockb',
-  },
-]
+const LOCK_FILES = {
+  npm: 'package-lock.json',
+  yarn: 'yarn.lock',
+  pnpm: 'pnpm-lock.yaml',
+  bun: 'bun.lockb',
+}
 
 function moveOutputToServerFolder() {
   const fileList = [
@@ -119,6 +108,9 @@ export default function (options) {
 
       // TODO: Delete this on next major version release
       if (typeof options.overrideNodeExePath == 'string') {
+        console.warn(
+          'overrideNodeExePath is deprecated use iisNodeOptions.nodeProcessCommandLine instead'
+        )
         if (!options.iisNodeOptions) options.iisNodeOptions = {}
         options.iisNodeOptions.nodeProcessCommandLine =
           options.overrideNodeExePath
@@ -130,7 +122,7 @@ export default function (options) {
       }
       if (typeof options.origin !== 'string') {
         console.warn(
-          `sveltekit-adapter-iis: unspecified option 'origin'!\nForm actions will likely return error 403: Cross-site POST form submissions are forbidden`
+          `unspecified option 'origin'!\nForm actions will likely return error 403: Cross-site POST form submissions are forbidden`
         )
       } else {
         defaultEnv.ORIGIN = options.origin
@@ -186,21 +178,10 @@ export default function (options) {
       }
 
       copyToOutput('package.json')
-
-      if (typeof options.packageManager != 'string')
-        console.warn(
-          'No package manager provided. Providing a package manager can speed up build times consider adding one using the `packageManager` property.'
-        )
-
-      LOCK_FILES.forEach((lockFile) => {
-        // When the package manager is supplied attempt to copy all lock files
-        if (
-          !options.packageManager ||
-          lockFile.packageManager == options.packageManager
-        ) {
-          copyToOutput(lockFile.fileName)
-        }
-      })
+      // detect the package manager
+      const pm = await detect(process.cwd())
+      // copy the lock file associated with the current package manager
+      copyToOutput(LOCK_FILES[pm])
 
       console.info('Finished adapting with sveltekit-adapter-iis')
     },

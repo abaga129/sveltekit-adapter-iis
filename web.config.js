@@ -50,25 +50,17 @@ function createIISNodeConfig(options) {
     watchedFiles: 'web.config;node_modules*;*.js;*.cjs',
   }
 
-  let attributes = Object.entries(options).reduce((acc, [key, value]) => {
-    const attributeValue = value ?? defaults[key]
+  let attributes = ''
 
-    if (
-      attributeValue === undefined ||
-      (key in defaults && options[key] === undefined)
-    ) {
-      return acc
-    }
+  if (options) Object.entries(options).forEach(([key,value]) => attributes += ` ${key}="${value}"`)
 
-    return `${acc} ${key}="${attributeValue}"`
-  }, '')
+  // Add defaults if not included
+  Object.entries(defaults).forEach(([key, value]) => {
+    if (options && options[key]) return;
 
-  for (const [key, value] of Object.entries(defaults)) {
-    if (!(key in options)) {
-      attributes += ` ${key}="${value}"`
-    }
-  }
-
+    attributes += ` ${key}="${value}"`
+  });
+ 
   return `<iisnode${attributes} />`
 }
 

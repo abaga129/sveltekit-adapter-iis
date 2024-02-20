@@ -1,12 +1,20 @@
 import fs from 'fs-extra'
 import path from 'node:path'
 import node_adapter from '@sveltejs/adapter-node'
+import { detect } from 'detect-package-manager'
 
 import { createWebConfig, createXMLTransform } from './web.config.js'
 import { createNodeServer } from './node-server.cjs.js'
 import { parse } from 'dotenv'
 
 const outputFolder = '.svelte-kit/adapter-iis'
+
+const LOCK_FILES = {
+  npm: 'package-lock.json',
+  yarn: 'yarn.lock',
+  pnpm: 'pnpm-lock.yaml',
+  bun: 'bun.lockb',
+}
 
 function moveOutputToServerFolder() {
   const fileList = [
@@ -23,10 +31,10 @@ function moveOutputToServerFolder() {
     const to = `${outputFolder}/app/${f}`
 
     try {
-        fs.accessSync(from, fs.constants.F_OK)
+      fs.accessSync(from, fs.constants.F_OK)
     } catch (err) {
-        // File doesn't exist
-        return
+      // File doesn't exist
+      return
     }
 
     fs.moveSync(from, to, (err) => console.error(err))
@@ -98,13 +106,23 @@ export default function (options) {
       const nodeServer = createNodeServer(options?.healthcheckRoute ?? true)
       writeFileToOutput(nodeServer, 'node-server.cjs')
 
+      // TODO: Delete this on next major version release
+      if (typeof options.overrideNodeExePath == 'string') {
+        console.warn(
+          'overrideNodeExePath is deprecated use iisNodeOptions.nodeProcessCommandLine instead'
+        )
+        if (!options.iisNodeOptions) options.iisNodeOptions = {}
+        options.iisNodeOptions.nodeProcessCommandLine =
+          options.overrideNodeExePath
+      }
+
       let defaultEnv = {
         ADDRESS_HEADER: 'x-forwarded-for',
         XFF_DEPTH: '1',
       }
       if (typeof options.origin !== 'string') {
         console.warn(
-          `sveltekit-adapter-iis: unspecified option 'origin'!\nForm actions will likely return error 403: Cross-site POST form submissions are forbidden`
+          `unspecified option 'origin'!\nForm actions will likely return error 403: Cross-site POST form submissions are forbidden`
         )
       } else {
         defaultEnv.ORIGIN = options.origin
@@ -123,10 +141,12 @@ export default function (options) {
               parse(fs.readFileSync(envPath, { encoding: 'utf-8' }))
             )
 
-            console.info(`Included ${envFn} variables in ${wcFilename}`);
+            console.info(`Included ${envFn} variables in ${wcFilename}`)
           } else {
             if (envFn === '') {
-              console.warn(`Didn't include environment variables (No .env found)`);
+              console.warn(
+                `Didn't include environment variables (No .env found)`
+              )
             } else {
               console.warn(
                 `Didn't include ${envFn} variables in ${wcFilename} (${envPath} does not exist!)`
@@ -147,7 +167,7 @@ export default function (options) {
           wcFilename === 'web.config'
             ? createWebConfig({
                 env: env,
-                nodePath: options?.overrideNodeExePath,
+                iisNodeOptions: options?.iisNodeOptions,
                 externalRoutes: options?.externalRoutes,
                 externalRoutesIgnoreCase: options?.externalRoutesIgnoreCase,
                 redirectToHttps: options?.redirectToHttps,
@@ -156,10 +176,12 @@ export default function (options) {
 
         writeFileToOutput(webConfig, wcFilename)
       }
+
       copyToOutput('package.json')
-      copyToOutput('package-lock.json')
-      copyToOutput('yarn.lock')
-      copyToOutput('pnpm-lock.yml')
+      // detect the package manager
+      const pm = await detect(process.cwd())
+      // copy the lock file associated with the current package manager
+      copyToOutput(LOCK_FILES[pm])
 
       console.info('Finished adapting with sveltekit-adapter-iis')
     },

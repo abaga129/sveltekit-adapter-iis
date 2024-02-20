@@ -42,6 +42,31 @@ function createAppSettingsEnv(env, isXMLTransform = false) {
 	`
 }
 
+/** @param {import('.').createWebConfigOptions["iisNodeOptions"]} options */
+function createIISNodeConfig(options) {
+  const defaults = {
+    enableXFF: true,
+    nodeProcessCommandLine: 'node.exe',
+    watchedFiles: 'web.config;node_modules*;*.js;*.cjs',
+  }
+
+  let attributes = ''
+
+  if (options)
+    Object.entries(options).forEach(
+      ([key, value]) => (attributes += ` ${key}="${value}"`)
+    )
+
+  // Add defaults if not included
+  Object.entries(defaults).forEach(([key, value]) => {
+    if (options && options[key]) return
+
+    attributes += ` ${key}="${value}"`
+  })
+
+  return `<iisnode${attributes} />`
+}
+
 /** @param {import('.').createWebConfigOptions} options */
 export function createWebConfig(options) {
   const routes = Array.from(new Set(options.externalRoutes ?? []))
@@ -71,9 +96,7 @@ export function createWebConfig(options) {
 				</rule>
 			</rules>
 		</rewrite>
-		<iisnode watchedFiles="web.config;node_modules\\*;*.js;*.cjs" nodeProcessCommandLine="${
-      options.nodePath ?? 'node.exe'
-    }" enableXFF="true" />
+		${createIISNodeConfig(options.iisNodeOptions)}
 	</system.webServer>
 </configuration>
 `

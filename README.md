@@ -52,6 +52,30 @@ pnpm build
 npm run build
 ```
 
+4. Install dependencies
+
+You should try to bundle all your dependencies as dev dependencies so that you can skip this step however not all dependencies play nice. In this case you can install just the production dependencies using your preferred package manager.
+
+npm
+```
+npm install --omit-dev
+```
+
+pnpm
+```bash
+pnpm install --P
+```
+
+yarn
+```bash
+yarn install --production=true
+```
+
+bun
+```bash
+bun install --production
+```
+
 ## Deploy the files to IIS
 
 ### Prerequisites

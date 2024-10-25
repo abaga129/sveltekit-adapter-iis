@@ -58,6 +58,9 @@ export interface AdapterOptions extends AdapterNodeAdapterOptions {
 
   /** Allows you to configure the behavior of IISNode */
   iisNodeOptions?: IISNodeOptions
+
+  /** Allows you to configure the behaviour of http errors in IIS */
+  httpErrors?: HttpErrors
 }
 
 export interface IISNodeOptions {
@@ -139,4 +142,13 @@ export interface createWebConfigOptions {
   externalRoutes?: AdapterOptions['externalRoutes']
   externalRoutesIgnoreCase?: AdapterOptions['externalRoutesIgnoreCase']
   redirectToHttps?: AdapterOptions['redirectToHttps']
+  httpErrors?: AdapterOptions['httpErrors']
+}
+
+export interface HttpErrors {
+  /**
+   * Specifies what happens to an existing response when the HTTP status code is an error, i.e. response codes >= 400.
+   *
+   */
+  existingResponse?: 'Auto' | 'Replace' | 'PassThrough'
 }

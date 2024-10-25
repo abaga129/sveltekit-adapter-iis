@@ -42,6 +42,15 @@ function createAppSettingsEnv(env, isXMLTransform = false) {
 	`
 }
 
+/** @param {import('.').HttpErrors} httpErrors */
+function createHttpErrors(httpErrors) {
+  return `<httpErrors ${
+    httpErrors.existingResponse ?? false
+      ? `existingResponse="${httpErrors.existingResponse}"`
+      : ''
+  } />`
+}
+
 /** @param {import('.').createWebConfigOptions["iisNodeOptions"]} options */
 function createIISNodeConfig(options) {
   const defaults = {
@@ -77,6 +86,8 @@ export function createWebConfig(options) {
           3
         )
       : ''
+  const httpErrors =
+    options.httpErrors ?? false ? createHttpErrors(options.httpErrors) : ''
 
   // <?xml version="1.0" encoding="utf-8"?> has to be on the first line!
   return `<?xml version="1.0" encoding="utf-8"?>
@@ -96,6 +107,7 @@ export function createWebConfig(options) {
 				</rule>
 			</rules>
 		</rewrite>
+        ${httpErrors}
 		${createIISNodeConfig(options.iisNodeOptions)}
 	</system.webServer>
 </configuration>

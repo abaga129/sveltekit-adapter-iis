@@ -57,21 +57,25 @@ npm run build
 You should try to bundle all your dependencies as dev dependencies so that you can skip this step however not all dependencies play nice. In this case you can install just the production dependencies using your preferred package manager.
 
 npm
+
 ```
 npm install --omit-dev
 ```
 
 pnpm
+
 ```bash
 pnpm install --P
 ```
 
 yarn
+
 ```bash
 yarn install --production=true
 ```
 
 bun
+
 ```bash
 bun install --production
 ```
@@ -274,6 +278,25 @@ const config = {
 ```
 
 By setting the option `redirectToHttps` to `true`, a URL Rewrite rule is applied to the `web.config` file that redirect all non-HTTPS request to HTTPS.
+
+## `httpErrors`
+
+By default IIS will take control of HTTP errors and show the default IIS `[STATUS].htm` for each status. If you want the SvelteKit application to handle all HTTP errors, you can specify `httpErrors.existingResponse` with `PassThrough` to let the application handle the errors.
+
+```js
+// svelte.config.js
+const config = {
+  //...
+  kit: {
+    adapter: IISAdapter({
+      // origin, ...
+      httpErrors: {
+        existingResponse: 'PassThrough',
+      },
+    }),
+  },
+}
+```
 
 ## Disclaimer
 

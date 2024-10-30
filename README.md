@@ -169,6 +169,15 @@ This is not a complete guide, but it should help.
   }
   ```
   This sets it in `web.config` during building.
+- **Only seeing default Error Page when accessing the app remotely**
+  - You need to enable `Detailed errors` in IIS for the site.
+  - Navigate to the site in IIS Manager
+  - Open `Error Pages`
+  - Click `Edit Feature Settings...` under the Actions menu on the right
+  - Change Error Responses to `Detailed Errors`. 
+  This will allow Sveltekit to handle errors itself.
+![image](https://github.com/user-attachments/assets/af03211f-32e2-4636-82c2-22264fac6588)
+
 
 ## `outputWhitelist`
 

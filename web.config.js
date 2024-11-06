@@ -48,6 +48,10 @@ function createHttpErrors(httpErrors) {
     httpErrors.existingResponse ?? false
       ? `existingResponse="${httpErrors.existingResponse}"`
       : ''
+  } ${
+    httpErrors.errorMode ?? false
+      ? `errorMode="${httpErrors.errorMode}"`
+      : ''
   } />`
 }
 
@@ -74,6 +78,19 @@ function createIISNodeConfig(options) {
   })
 
   return `<iisnode${attributes} />`
+}
+/** @param {import('.').createWebConfigOptions['systemWeb']} options */
+function createSystemWeb(options) {
+  return options ? `
+  <system.web>
+    ${createCustomErrors(options.customErrors)}
+  </system.web>` : '';
+}
+
+/** @param {import('.').createWebConfigOptions['systemWeb']['customErrors']} options */
+function createCustomErrors(options) {
+  const modeAttr = options?.mode ? `mode="${options?.mode}"` : '';
+  return options ? `<customErrors ${options?.mode ? modeAttr : ''}/>` : '';
 }
 
 /** @param {import('.').createWebConfigOptions} options */
@@ -110,6 +127,7 @@ export function createWebConfig(options) {
         ${httpErrors}
 		${createIISNodeConfig(options.iisNodeOptions)}
 	</system.webServer>
+  ${createSystemWeb(options.systemWeb)}
 </configuration>
 `
 }

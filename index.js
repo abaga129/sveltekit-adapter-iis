@@ -172,6 +172,7 @@ export default function (options) {
                 externalRoutesIgnoreCase: options?.externalRoutesIgnoreCase,
                 redirectToHttps: options?.redirectToHttps,
                 httpErrors: options?.httpErrors,
+                systemWeb: options?.systemWeb
               })
             : createXMLTransform(env)
 

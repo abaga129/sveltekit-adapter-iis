@@ -77,7 +77,7 @@ export interface IISNodeOptions {
   /** @default false */
   debugHeaderEnabled?: boolean
   /** @default true */
-  debErrorsEnabled?: boolean
+  devErrorsEnabled?: boolean
   /** @default true */
   enableXFF?: boolean
   /** @default false */

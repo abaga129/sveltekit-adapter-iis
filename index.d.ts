@@ -100,6 +100,8 @@ export interface IISNodeOptions {
    *
    * @default false */
   loggingEnabled?: boolean
+  /** @default 4096  */
+  maxAllowedContentLength?: number
   /** @default 1024 */
   maxConcurrentRequestsPerProcess?: number
   /** @default 20 */
@@ -149,11 +151,12 @@ export interface createWebConfigOptions {
 }
 
 export interface SystemWeb {
-  customErrors?: CustomErrors 
+  customErrors?: CustomErrors
+  maxRequestLength?: number
 }
 
 export interface CustomErrors {
-  mode?: 'On' | 'Off' | 'RemoteOnly';
+  mode?: 'On' | 'Off' | 'RemoteOnly'
 }
 
 export interface HttpErrors {
@@ -161,6 +164,6 @@ export interface HttpErrors {
    * Specifies what happens to an existing response when the HTTP status code is an error, i.e. response codes >= 400.
    *
    */
-  existingResponse?: 'Auto' | 'Replace' | 'PassThrough',
+  existingResponse?: 'Auto' | 'Replace' | 'PassThrough'
   errorMode?: 'Custom' | 'Detailed' | 'DetailedLocalOnly'
 }

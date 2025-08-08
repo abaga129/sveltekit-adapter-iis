@@ -79,11 +79,22 @@ function createIISNodeConfig(options) {
 
   return `<iisnode${attributes} />`
 }
+/** @param {number} maxAllowedContentLength */
+function createRequestFiltering(maxAllowedContentLength) {
+  return maxAllowedContentLength ? `
+    <security>
+      <requestFiltering>
+        <requestLimits maxAllowedContentLength="${maxAllowedContentLength}" />
+      </requestFiltering>
+    </security>` : '';
+}
+
 /** @param {import('.').createWebConfigOptions['systemWeb']} options */
 function createSystemWeb(options) {
   return options ? `
   <system.web>
     ${createCustomErrors(options.customErrors)}
+    <httpRuntime maxRequestLength="${options.maxRequestLength || 4096}" />
   </system.web>` : '';
 }
 
@@ -105,29 +116,31 @@ export function createWebConfig(options) {
       : ''
   const httpErrors =
     options.httpErrors ?? false ? createHttpErrors(options.httpErrors) : ''
+  const requestFiltering = createRequestFiltering(options.maxAllowedContentLength || 10485760)
 
   // <?xml version="1.0" encoding="utf-8"?> has to be on the first line!
   return `<?xml version="1.0" encoding="utf-8"?>
 <configuration>${options.env ? createAppSettingsEnv(options.env) : ''}
-	<system.webServer>
-		<handlers>
-			<!-- Indicates that the server.js file is a node.js site to be handled by the iisnode module -->
-			<add name="iisnode" path="node-server.cjs" verb="*" modules="iisnode" />
-		</handlers>
-		<rewrite>
-			<rules>${
+    <system.webServer>
+        <handlers>
+            <!-- Indicates that the server.js file is a node.js site to be handled by the iisnode module -->
+            <add name="iisnode" path="node-server.cjs" verb="*" modules="iisnode" />
+        </handlers>
+        <rewrite>
+            <rules>${
         options.redirectToHttps ?? false ? indent(RULE_HTTPS, 4) : ''
       }${blockRule}
-				<rule name="app">
-					<match url="/*" />
-					<action type="Rewrite" url="node-server.cjs" />
-				</rule>
-			</rules>
-		</rewrite>
+                <rule name="app">
+                    <match url="/*" />
+                    <action type="Rewrite" url="node-server.cjs" />
+                </rule>
+            </rules>
+        </rewrite>
         ${httpErrors}
-		${createIISNodeConfig(options.iisNodeOptions)}
-	</system.webServer>
-  ${createSystemWeb(options.systemWeb)}
+        ${createIISNodeConfig(options.iisNodeOptions)}
+        ${requestFiltering}
+    </system.webServer>
+  ${createSystemWeb(options.systemWeb || { maxRequestLength: 4096 })}
 </configuration>
 `
 }
